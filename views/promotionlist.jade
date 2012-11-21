@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
+    h1= title
+  table(data-role='table')
+    tbody
+      - var alt = 0
+        each promo in data
+          - var filepath = '/' + userId + '/promotion/' + promo['Id'];
+          #filepath
+            - alt = 1 - alt
+              tr(class=alt ? 'odd' : 'even')
+                td 
+                  a(href=filepath, class='nocolor')
+                    div
+                      table
+                        tbody
+                          tr
+                            h3 #{promo['Title']}
+                          tr
+                            h4 #{promo['Description']}
+                td
+                  a(href=filepath, class='nocolor')
+                    div
+                      table
+                        tbody
+                          tr
+                            h4 #{promo['CreatorName']}
+                          tr
+                            h5 #{promo['EffectiveDate']} - #{promo['ExpireDate']}
+                td
+                  a(href=filepath, class='nocolor')
+                    div
+                      h4 #{promo['ApprovalStatus']}
+  - var promotionUrl = '/' + userId + '/promotion/' + promotionId
+  - var historyUrl = '/' + userId + '/history' + (enablePromotion ? '?lastPromotionId='+promotionId : '')
+  div(data-role='footer', data-position='fixed', data-id='myFooter')
+    div(data-role='navbar')
+      ul
+        li
+          a(href=promotionUrl, class=enablePromotion ? '' : 'ui-disabled') Promotion
+        li
+          a(href=historyUrl, class='ui-btn-active') History

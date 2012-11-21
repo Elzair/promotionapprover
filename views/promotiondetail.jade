@@ -1,0 +1,154 @@
+extends layout
+
+block content
+  div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
+    h1 #{data['TitleNoHtml']}
+  div#DescId
+    h2 Description
+    p #{data['Description']}
+  div#UsecId
+    table(data-role='table')
+      thead
+        tr
+          th Title
+          th USEC
+          th Rate
+      tbody
+        - var alt = 0
+        each usec in data['PromotionUsecCodeTable']
+          - alt = 1 - alt
+          tr(class=alt ? 'odd' : 'even')
+            td
+              p #{usec['Title'].toString()}
+            td
+              p #{usec['UsecCode'].toString()}
+            td
+              p #{usec['Rate'].toString()}
+  div#ImageId
+    h2 Image
+    - var popuppath = '/media/' + data['ImageId'] + '?minify=1'
+    - var bigpath = '/media/' + data['ImageId']
+    a(href=bigpath)
+      img(src=popuppath)
+  div#PrintId
+    h2 Print
+      ul
+        each print in data['PromotionFileUploadPrintTable']
+          - var docurl = '/media/' + print['FileId']
+          #docurl
+            li
+              a(href=docurl, data-ajax='false')
+                p.filename #{print['FileName']}
+  div#AudioId
+    h2 Audio
+      ul
+        each audio in data['PromotionFileUploadAudioTable']
+          - var audurl = '/media/' + audio['FileId']
+          #audurl
+            li
+              a(href=audurl, data-ajax='false') 
+                p.filename #{audio['FileName']}
+  div#VideoId
+    h2 Video
+      ul
+        each video in data['PromotionFileUploadVideoTable']
+          - var vidurl = '/media/' + video['FileId']
+          #vidurl
+            li
+              a(href=vidurl, data-ajax='false') 
+                p.filename #{video['FileName']}
+  div#MarketingId
+    h2 Marketing Objective
+    p #{data['MarketingObjective']}
+  div#BudgetId
+    h2 Budget
+    p #{data['Budget']}
+  div#AdvertisingId
+    h2 Advertising Criteria
+    p #{data['AdvertisingCriteria']}
+  div#CommunicationId
+    h2 Communication Types
+    p #{data['PromotionCommunicationTypes']}
+  div#CommunityId
+    h2 Communities
+    p #{data['PromotionCommunities']}
+  div#StatusId
+    h2 Customer Status
+    p #{data['CustomerStatusTitle']}
+  div#TypeId
+    h2 Customer Type
+    p #{data['CustomerTypeTitle']}
+  div#DatesId
+    h2 Communication Dates
+    p #{data['CommunicationDates']}
+  div#ExpirationId
+    h2 Expiration Date
+    p #{data['ExpirationDate']}
+  div#ContractId
+    h2 Requires Contract
+    p #{data['RequiresContract']}
+  div#TrainingId
+    h2 Requires Training
+    p #{data['RequiresTraining']}
+  div#CategoryId
+    h2 Category
+    p #{data['CategoryTitle']}
+  div#QuickId
+    h2 Quick View
+    p #{data['QuickView']}
+  div#CommentId
+    h2 Comments
+    p #{data['Comments']}
+  div#InputId
+    script(type='text/javascript')
+      $('#reason').bind('keyup', function() {
+        if (this.value == '')
+          disableSubmit();
+        else
+          enableSubmit();
+      });
+      function disableSubmit() {
+        $('#submitButton').addClass('ui-disabled');
+      }
+      function enableSubmit() { 
+        $('#submitButton').removeClass('ui-disabled');
+      }
+      function reject() { 
+        $('#reason').show();
+        $('#reasonLabel').show();
+        if ($('#reason').val() == '')
+          disableSubmit();
+        else
+          enableSubmit();
+      }
+      function approve() {
+        $('#reason').hide();
+        $('#reasonLabel').hide();
+        enableSubmit();
+      }
+      $(document).ready(function() {
+        $('#reason').hide();
+        $('#reasonLabel').hide();
+      })
+    if enableApprover
+      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision';
+      form(method='post', action=postUrl, id='decisionForm')
+        div(data-role='fieldcontain')
+          fieldset(data-role='controlgroup', data-type='horizontal')
+            legend Decide:
+            input(type='radio', name='decision', id='approves', value='Approve', onClick='approve()')
+            label(for='approves') Approve
+            input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
+            label(for='rejects') Reject
+          label(for='reason', id='reasonLabel') Reason:
+          input(type='text', name='reason', id='reason')
+        input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
+  - var promotionUrl = '/' + userId + '/promotion/' + promotionId
+  - var historyUrl = '/' + userId + '/history?lastPromotionId=' + promotionId
+  div(data-role='footer', data-position='fixed', data-id='myFooter')
+    div(data-role='navbar')
+      ul
+        li
+          a(href=promotionUrl, class='ui-btn-active') Promotion
+        li
+          a(href=historyUrl) History

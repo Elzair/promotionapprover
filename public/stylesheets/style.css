@@ -1,0 +1,26 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 50px;
+}
+th {
+  background-color: #646464;
+  color: #fff;
+}
+.odd {
+  background-color: #dcdcdc;
+}
+.even {
+  background-color: #b4b4b4;
+}
+td {
+  word-wrap: break-words;
+  text-align: center;
+}
+a:link {
+  color: #000;
+  background-color: #000;
+  text-decoration: none;
+}
+p.filename {
+  word-wrap: break-word;
+}
