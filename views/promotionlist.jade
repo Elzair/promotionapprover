@@ -11,28 +11,28 @@ block content
           #filepath
             - alt = 1 - alt
               tr(class=alt ? 'odd' : 'even')
-                td 
+                td(class='promolist')
                   a(href=filepath, class='nocolor')
                     div
                       table
                         tbody
                           tr
-                            h3 #{promo['Title']}
+                            h3.linked #{promo['Title']}
                           tr
-                            h4 #{promo['Description']}
-                td
+                            h4.linked #{promo['Description']}
+                td(class='promolist')
                   a(href=filepath, class='nocolor')
                     div
                       table
                         tbody
                           tr
-                            h4 #{promo['CreatorName']}
+                            h4.linked #{promo['CreatorName']}
                           tr
-                            h5 #{promo['EffectiveDate']} - #{promo['ExpireDate']}
-                td
+                            h5.linked #{promo['EffectiveDate']} - #{promo['ExpireDate']}
+                td(class='promolist')
                   a(href=filepath, class='nocolor')
                     div
-                      h4 #{promo['ApprovalStatus']}
+                      h4.linked #{promo['ApprovalStatus']}
   - var promotionUrl = '/' + userId + '/promotion/' + promotionId
   - var historyUrl = '/' + userId + '/history' + (enablePromotion ? '?lastPromotionId='+promotionId : '')
   div(data-role='footer', data-position='fixed', data-id='myFooter')

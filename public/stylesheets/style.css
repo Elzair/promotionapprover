@@ -12,14 +12,16 @@ th {
 .even {
   background-color: #b4b4b4;
 }
-td {
+td.promolist {
   word-wrap: break-words;
   text-align: center;
 }
-a:link {
-  color: #000;
-  background-color: #000;
+a {
   text-decoration: none;
+}
+.linked {
+  text-decoration: none;
+  color: #000;
 }
 p.filename {
   word-wrap: break-word;
