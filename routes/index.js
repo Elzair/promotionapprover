@@ -19,8 +19,8 @@ exports.history = function(req, res){
   var options = {
 	host: 'compdev2',
 	port: 8087,
-	path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-	//path: '/PromotionWcfR/GetRequestsForApproval?userId=' + userId,
+	//path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
+	path: '/PromotionWcfR/GetRequestsForApproval?userId=' + userId,
 	method: 'GET'
   };
   http.request(options, function(resp){
@@ -47,8 +47,8 @@ exports.promotion = function(req, res){
   var options = {
 	host: 'compdev2',
 	port: 8087,
-	path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
-	//path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
+	//path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
+    path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
 	method: 'GET'
   };
   http.request(options, function(resp){
@@ -59,6 +59,7 @@ exports.promotion = function(req, res){
     });
 	resp.on('end', function (){
 	  var data = JSON.parse(arr);
+	  console.log(JSON.stringify(data));
 	  var enableApprover = false;
 	  if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
 	    enableApprover = true;
@@ -77,9 +78,11 @@ exports.decision = function(req, res){
   if (req.body.hasOwnProperty('reason'))
     reason = req.body.reason;
   if (decision == 'Approve')
-    path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
+    //path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
+    path: '/PromotionWcfR/ApprovePromotion?promotionId=' + promotionId;
   else if (decision == 'Reject')
-    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
+    //path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
+    path: '/PromotionWcfR/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponen(reason);
   var options = {
     host: 'compdev2',
     port: 8087,
@@ -110,7 +113,8 @@ exports.media = function(req, res){
   var options = {
     host: 'compdev2',
     port: 8087,
-    path: '/api/Promotion/GetMediaByFileId?fileId=' + req.params.fileId,
+    //path: '/api/Promotion/GetMediaByFileId?fileId=' + req.params.fileId,
+    path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
     method: 'GET'
   };
   http.request(options, function(resp){

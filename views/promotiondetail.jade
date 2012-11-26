@@ -15,7 +15,7 @@ block content
           th Rate
       tbody
         - var alt = 0
-        each usec in data['Usecs']
+        each usec in data['PromotionUsecCodeTable']
           - alt = 1 - alt
           tr(class=alt ? 'odd' : 'even')
             td
@@ -33,7 +33,7 @@ block content
   div#PrintId
     h2 Print
       ul
-        each doc in data['DocumentUploads']
+        each doc in data['PromotionFileUploadPrintTable']
           - var docurl = '/media/' + doc['FileId']
           #docurl
             li
@@ -42,7 +42,7 @@ block content
   div#AudioId
     h2 Audio
       ul
-        each audio in data['AudioUploads']
+        each audio in data['PromotionFileUploadAudioTable']
           - var audurl = '/media/' + audio['FileId']
           #audurl
             li
@@ -51,7 +51,7 @@ block content
   div#VideoId
     h2 Video
       ul
-        each video in data['VideoUploads']
+        each video in data['PromotionFileUploadVideoTable']
           - var vidurl = '/media/' + video['FileId']
           #vidurl
             li
