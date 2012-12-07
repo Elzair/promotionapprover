@@ -145,6 +145,9 @@ block content
         input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
   - var promotionUrl = '/' + userId + '/promotion/' + promotionId
   - var historyUrl = '/' + userId + '/history?lastPromotionId=' + promotionId
+  div(class='hidden')
+    p(id='userId') #{userId}
+    p(id='promotionId') #{promotionId}
   div(data-role='footer', data-position='fixed', data-id='myFooter')
     div(data-role='navbar')
       ul

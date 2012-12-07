@@ -75,17 +75,22 @@ exports.decision = function(req, res){
   var decision = req.body.decision;
   var reason = '';
   var path = '';
+  var postData = '';
   if (req.body.hasOwnProperty('reason'))
     reason = req.body.reason;
-  if (decision == 'Approve')
+  if (decision == 'Approve') {
     //path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
-    path: '/PromotionWcfR/ApprovePromotion?promotionId=' + promotionId;
-  else if (decision == 'Reject')
+    path = '/PromotionWcfR/ApprovePromotion?id=' + promotionId;
+    postData = JSON.stringify({id: promotionId});
+  }
+  else if (decision == 'Reject') {
     //path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
-    path: '/PromotionWcfR/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponen(reason);
+    path = '/PromotionWcfR/RejectPromotion?id=' + promotionId + '&reason=' + encodeURIComponent(reason);
+    postData = JSON.stringify({id: promotionId, reason: reason});
+  }
   var options = {
-    host: 'compdev2',
-    port: 8087,
+	host: 'compdev2',
+	port: 8087,
     path: path,
     method: 'POST',
     header: {
@@ -93,7 +98,7 @@ exports.decision = function(req, res){
       'content-length': req.body.length
     }
   };
-  http.request(options, function(resp){
+  var postReq = http.request(options, function(resp){
     console.log('STATUS: ' + resp.statusCode);
     console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
@@ -104,15 +109,18 @@ exports.decision = function(req, res){
     });
 	resp.on('end', function (){
 	  //var data = JSON.parse(arr);
-	  console.log('BODY: ' + JSON.stringify(body))
+	  console.log('BODY: ' + JSON.stringify(body));
+	  res.redirect('/' + userId + '/history');
     });
-  }).end();
+  });
+  postReq.write(postData);
+  postReq.end();
 };
 
 exports.media = function(req, res){
   var options = {
-    host: 'compdev2',
-    port: 8087,
+	host: 'compdev2',
+	port: 8087,
     //path: '/api/Promotion/GetMediaByFileId?fileId=' + req.params.fileId,
     path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
     method: 'GET'
