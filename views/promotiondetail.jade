@@ -132,7 +132,7 @@ block content
       })
     if enableApprover
       - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision';
-      form(method='post', action=postUrl, id='decisionForm')
+      form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
         div(data-role='fieldcontain')
           fieldset(data-role='controlgroup', data-type='horizontal')
             legend Decide:
