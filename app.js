@@ -30,7 +30,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
+app.get('/', user.login);
+app.get('/:userId/login', user.login);
 app.get('/:userId/history', routes.history);
 app.get('/:userId/promotion/:promotionId', routes.promotion);
 app.post('/:userId/promotion/:promotionId/decision', routes.decision);
