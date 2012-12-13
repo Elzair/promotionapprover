@@ -20,7 +20,7 @@ exports.history = function(req, res){
 	host: 'compdev2',
 	port: 8087,
 	//path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-	path: '/PromotionWcfR/GetRequestsForApproval?userId=' + userId,
+	path: '/PromotionWcfR/GetPromotions?userId=' + userId,
 	method: 'GET'
   };
   http.request(options, function(resp){

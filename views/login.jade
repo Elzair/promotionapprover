@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
+    h1= title
+  p(id='userId', class='hidden') #{userId}
+  script(type='text/javascript')
+    if (typeof(Storage) !== 'undefined' && $('#userId').text() != '' && localStorage.hasOwnProperty('ComporiumHashedPassword')){
+      
+    }
+  div(class='login')
+    - var postUrl = '/' + userId + '/login';
+    form(method='post', action=postUrl, class='loginForm')
+      input(type='text', name='userId', class='userId', placeholder='Username')
+      input(type='password', name='password', class='password', placeholder='Password')
+      input(type='submit', id='submitButton', class='ui-disabled', value='Submit')

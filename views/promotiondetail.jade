@@ -71,7 +71,9 @@ block content
     p #{data['PromotionCommunicationTypes']}
   div#CommunityId
     h2 Communities
-    p #{data['PromotionCommunities']}
+    each community in data['PromotionCommunities']
+      - var commText = community['Company'] + ': ' + community['Community']
+      p #{commText}
   div#StatusId
     h2 Customer Status
     p #{data['CustomerStatusTitle']}
@@ -145,9 +147,9 @@ block content
         input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
   - var promotionUrl = '/' + userId + '/promotion/' + promotionId
   - var historyUrl = '/' + userId + '/history?lastPromotionId=' + promotionId
-  div(class='hidden')
-    p(id='userId') #{userId}
-    p(id='promotionId') #{promotionId}
+  div
+    p(id='userId', class='hidden') #{userId}
+    p(id='promotionId', class='hidden') #{promotionId}
   div(data-role='footer', data-position='fixed', data-id='myFooter')
     div(data-role='navbar')
       ul
