@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
+    h1= title
+  p(id='userIdVal', class='userIdVal', hidden) #{userId}
+  p(id='promotionIdVal', class='promotionIdVal', hidden) #{promotionId}
+  p(id='test')
+  p(id='test2')
+  p(id='error', class='error')
+  script(type='text/javascript')
+    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH')){
+      var url = ''
+      if ($('.promotionIdVal').html() != '')
+        url = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
+      else
+        url = '/' + $('.userIdVal').html() + '/history';
+      $('#test').html(url);
+      /*$.ajax({
+        url: url,
+        type: 'GET',
+        success: function(data){
+          window.location = url;
+        }
+      });*/
+    }
+    else
+      $('#test').html('Wazzup!');
+    $(function(){
+      $('.button').click(function(){
+        $('.error').html('');
+        if ($('.userId').val() != '' && $('.password').val() != ''){
+          $.ajax({
+            url: '/' + $('.userId').val() + '/login',
+            type: 'POST',
+            data: {userId: $('.userId').val(), password: $('.password').val()},
+            success: function(data){
+              $('#test').html('Success!' + data['Hash']);
+              localStorage.setItem('CMPHASH', data['Hash']);
+              var url = '/' + $('.userId').val() + [$('.promotionIdVal').html() ? '/promotion' + $('.promotionIdVal').html() : '/history'];
+              $('#test').html('Success! ' + url);
+              $('#test2').html(CryptoJS.HmacSHA512("Message", "Secret Passphrase").toString());
+              //$('#test2').html(localStorage.getItem('CMPHASH'));
+              //$.mobile.loadPage(url);
+              return false;
+            },
+            error: function(data){
+              $('#test').html('Something went wrong: ' + JSON.stringify(data));
+              return false;
+            }
+          });
+        }
+        else{
+          if ($('.userId').val() == '')
+            $('.error').html('You must enter a username!');
+          if ($('.password').val() == '')
+            $('.error').html(($('.error').html() == '' ? '' : $('.error').html() + '<br>') + 'You must enter a password!');
+          return false;
+        }
+      })
+    });
+    $(function(){
+      $('.lastInput').bind('keyup', function(e){
+        if (e.which == 13)
+          $('.button').click();
+      });
+    });
+  div(class='login')
+    - var postUrl = '/';
+    form(method='post', action=postUrl, class='loginForm')
+      input(type='text', name='userId', id='userId', class='userId textInput', placeholder='Username')
+      input(type='password', name='password', id='password', class='password textInput lastInput', placeholder='Password')
+      input(type='hidden', id='promotionId') #{promotionId}
+      input(type='button', id='submitButton', class='button', value='Submit')
+  include footer

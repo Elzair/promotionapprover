@@ -15,7 +15,7 @@ block content
           th Rate
       tbody
         - var alt = 0
-        each usec in data['Usecs']
+        each usec in data['PromotionUsecCodeTable']
           - alt = 1 - alt
           tr(class=alt ? 'odd' : 'even')
             td
@@ -33,7 +33,7 @@ block content
   div#PrintId
     h2 Print
       ul
-        each doc in data['DocumentUploads']
+        each doc in data['PromotionFileUploadPrintTable']
           - var docurl = '/media/' + doc['FileId']
           #docurl
             li
@@ -42,7 +42,7 @@ block content
   div#AudioId
     h2 Audio
       ul
-        each audio in data['AudioUploads']
+        each audio in data['PromotionFileUploadAudioTable']
           - var audurl = '/media/' + audio['FileId']
           #audurl
             li
@@ -51,7 +51,7 @@ block content
   div#VideoId
     h2 Video
       ul
-        each video in data['VideoUploads']
+        each video in data['PromotionFileUploadVideoTable']
           - var vidurl = '/media/' + video['FileId']
           #vidurl
             li
@@ -71,7 +71,9 @@ block content
     p #{data['PromotionCommunicationTypes']}
   div#CommunityId
     h2 Communities
-    p #{data['PromotionCommunities']}
+    each community in data['PromotionCommunities']
+      - var commText = community['Company'] + ': ' + community['Community']
+      p #{commText}
   div#StatusId
     h2 Customer Status
     p #{data['CustomerStatusTitle']}
@@ -131,8 +133,9 @@ block content
         $('#reasonLabel').hide();
       })
     if enableApprover
-      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision';
-      form(method='post', action=postUrl, id='decisionForm')
+      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
+      - var creatorEmail = data['CreatedByEmail']
+      form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
         div(data-role='fieldcontain')
           fieldset(data-role='controlgroup', data-type='horizontal')
             legend Decide:
@@ -142,13 +145,6 @@ block content
             label(for='rejects') Reject
           label(for='reason', id='reasonLabel') Reason:
           input(type='text', name='reason', id='reason')
+          input(type='hidden', name='creatorEmail', id='creatorEmail', value=creatorEmail)
         input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
-  - var promotionUrl = '/' + userId + '/promotion/' + promotionId
-  - var historyUrl = '/' + userId + '/history?lastPromotionId=' + promotionId
-  div(data-role='footer', data-position='fixed', data-id='myFooter')
-    div(data-role='navbar')
-      ul
-        li
-          a(href=promotionUrl, class='ui-btn-active') Promotion
-        li
-          a(href=historyUrl) History
+  include footer

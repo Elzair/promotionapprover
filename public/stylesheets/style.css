@@ -23,6 +23,17 @@ a {
   text-decoration: none;
   color: #000;
 }
-p.filename {
+.filename {
   word-wrap: break-word;
+}
+.centered {
+  text-align: center;
+}
+.error {
+  text-align: center;
+  font: 16px "Lucida Grande", Helvetica, Arial, san-serif;
+  color: #f00;
+}
+.pagecontainer {
+  display: none;
 }
