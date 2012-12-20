@@ -36,7 +36,8 @@ exports.history = function(req, res){
 	  //    data[promo][param] = data[promo][param].replace(/&amp;/g, '&');;
 	  //  }	
 	  //}
-	  res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
+	  res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
+        enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2});
 	});
   }).end();
 }
@@ -63,7 +64,8 @@ exports.promotion = function(req, res){
 	  var enableApprover = false;
 	  if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
 	    enableApprover = true;
-	  res.render('promotiondetail', {title: 'Detail', data: data, enableApprover: enableApprover, userId: userId, promotionId: promotionId});
+	  res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
+	    enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
 	});
   }).end();
 };
@@ -73,6 +75,7 @@ exports.decision = function(req, res){
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
   var decision = req.body.decision;
+  var creatorEmail = req.body.creatorEmail;
   var reason = '';
   var path = '';
   var postData = '';
@@ -95,7 +98,7 @@ exports.decision = function(req, res){
     method: 'POST',
     header: {
       'content-type': 'application/json',
-      'content-length': req.body.length
+      'content-length': postData.length
     }
   };
   var postReq = http.request(options, function(resp){
@@ -110,7 +113,9 @@ exports.decision = function(req, res){
 	resp.on('end', function (){
 	  //var data = JSON.parse(arr);
 	  console.log('BODY: ' + JSON.stringify(body));
-	  res.redirect('/' + userId + '/history');
+	  //res.redirect('/' + userId + '/history');
+      res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
+        enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail});
     });
   });
   postReq.write(postData);

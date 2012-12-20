@@ -133,7 +133,8 @@ block content
         $('#reasonLabel').hide();
       })
     if enableApprover
-      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision';
+      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
+      - var creatorEmail = data['CreatedByEmail']
       form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
         div(data-role='fieldcontain')
           fieldset(data-role='controlgroup', data-type='horizontal')
@@ -144,16 +145,6 @@ block content
             label(for='rejects') Reject
           label(for='reason', id='reasonLabel') Reason:
           input(type='text', name='reason', id='reason')
+          input(type='hidden', name='creatorEmail', id='creatorEmail', value=creatorEmail)
         input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
-  - var promotionUrl = '/' + userId + '/promotion/' + promotionId
-  - var historyUrl = '/' + userId + '/history?lastPromotionId=' + promotionId
-  div
-    p(id='userId', class='hidden') #{userId}
-    p(id='promotionId', class='hidden') #{promotionId}
-  div(data-role='footer', data-position='fixed', data-id='myFooter')
-    div(data-role='navbar')
-      ul
-        li
-          a(href=promotionUrl, class='ui-btn-active') Promotion
-        li
-          a(href=historyUrl) History
+  include footer

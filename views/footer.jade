@@ -1,0 +1,16 @@
+block footer
+  - var promotionUrl = '/' + userId + '/promotion/' + promotionId
+  - var historyUrl = '/' + userId + '/history' + (enablePromotion ? '?lastPromotionId='+promotionId : '')
+  - var logoutUrl = '/' + userId + '/logout'
+  - var promotionClass = 'validate ' + (enablePromotion ? '' : 'ui-disabled ') + (active == 1 ? 'ui-btn-active' : '')
+  - var historyClass = 'validate ' + (enableHistory ? '' : 'ui-disabled ') + (active == 2 ? 'ui-btn-active' : '')
+  - var logoutClass = 'validate ' + (enableLogout ? '' : 'ui-disabled ') + (active == 3 ? 'ui-btn-active' : '')
+  div(data-role='footer', data-position='fixed', data-id='myFooter')
+    div(data-role='navbar')
+      ul
+        li
+          a(href=promotionUrl, class=promotionClass) Promotion
+        li
+          a(href=historyUrl, class=historyClass) History
+        li
+          a(href=logoutUrl, class=logoutClass) Logout

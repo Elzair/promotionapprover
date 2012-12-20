@@ -31,8 +31,10 @@ app.configure('development', function(){
 });
 
 //app.get('/', user.login);
-app.get('/:userId/login', user.login);
-app.get('/:userId/history', routes.history);
+app.get('/:userId/login', user.loginPrompt);
+app.post('/:userId/login', user.login);
+app.all('/:userId/logout', user.logout);
+app.get('/:userId/history', user.validate, routes.history);
 app.get('/:userId/promotion/:promotionId', routes.promotion);
 app.post('/:userId/promotion/:promotionId/decision', routes.decision);
 app.get('/media/:fileId', routes.media);

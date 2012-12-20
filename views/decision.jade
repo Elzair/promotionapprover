@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
+    h1= title
+  div(class='centered')
+    if decision == 'Approve Promotion'
+      h2 Promotion Approved!
+    else
+      h2 Promotion Rejected
+      p Would you like to contact the creator to tell them of your reason?
+      - var emailUrl = 'mailto:' + creatorEmail
+      a(href=emailUrl) #{creatorEmail}
+    - var historyUrl = '/' + userId + '/history'
+    a(href=historyUrl, class='validate') Go back to history
+  include footer
