@@ -35,11 +35,15 @@ block content
             type: 'POST',
             data: {userId: $('.userId').val(), password: $('.password').val()},
             success: function(data){
-              $('#test').html('Success!' + data['Hash']);
+              $('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
-              var url = '/' + $('.userId').val() + [$('.promotionIdVal').html() ? '/promotion' + $('.promotionIdVal').html() : '/history'];
-              $('#test').html('Success! ' + url);
-              $('#test2').html(CryptoJS.HmacSHA512("Message", "Secret Passphrase").toString());
+              $('#test').html(localStorage.getItem('CMPHASH'));
+              //var url = '/' + $('.userId').val() + [$('.promotionIdVal').html() ? '/promotion' + $('.promotionIdVal').html() : '/history'];
+              var url = 'http://www.google.com?q=search&b=this';
+              var ff = {zoo: 'hairy', bear: 'stinky'};
+              //var gg = utils.sortProperties(ff);
+              $('#test').html('Success! ' + JSON.stringify(ff));
+              //$('#test2').html('Wazzup!' + CryptoJS.HmacSHA512("Message", "Secret Passphrase").toString());
               //$('#test2').html(localStorage.getItem('CMPHASH'));
               //$.mobile.loadPage(url);
               return false;

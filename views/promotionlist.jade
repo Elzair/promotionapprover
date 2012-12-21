@@ -3,15 +3,17 @@ extends layout
 block content
   div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
     h1= title
-  table(data-role='table')
+  table(data-role='table', class='promolist')
+    thead
+      tr: th(colspan=2) Approval in Progress
     tbody
       - var alt = 0
-        each promo in data
+        each promo in pending
           - var filepath = '/' + userId + '/promotion/' + promo['Id'];
           #filepath
             - alt = 1 - alt
               tr(class=alt ? 'odd' : 'even')
-                td(class='promolist')
+                td(class='promolist firstcol')
                   a(href=filepath, class='nocolor validate')
                     div
                       table
@@ -20,7 +22,63 @@ block content
                             h3.linked #{promo['Title']}
                           tr
                             h4.linked #{promo['Description']}
-                td(class='promolist')
+                td(class='promolist secondcol')
+                  a(href=filepath, class='nocolor validate')
+                    div
+                      table
+                        tbody
+                          tr
+                            h4.linked #{promo['CreatorName']}
+                          tr
+                            h5.linked #{promo['EffectiveDate']} - #{promo['ExpireDate']}						 
+  table(data-role='table', class='promolist')
+    thead
+      tr: th(colspan=2) Approved
+    tbody
+      - var alt = 0
+        each promo in approved
+          - var filepath = '/' + userId + '/promotion/' + promo['Id'];
+          #filepath
+            - alt = 1 - alt
+              tr(class=alt ? 'odd' : 'even')
+                td(class='promolist firstcol')
+                  a(href=filepath, class='nocolor validate')
+                    div
+                      table
+                        tbody
+                          tr
+                            h3.linked #{promo['Title']}
+                          tr
+                            h4.linked #{promo['Description']}
+                td(class='promolist secondcol')
+                  a(href=filepath, class='nocolor validate')
+                    div
+                      table
+                        tbody
+                          tr
+                            h4.linked #{promo['CreatorName']}
+                          tr
+                            h5.linked #{promo['EffectiveDate']} - #{promo['ExpireDate']} 
+  table(data-role='table', class='promolist')
+    thead
+      tr: th(colspan=2) Rejected
+    tbody
+      - var alt = 0
+        each promo in rejected
+          - var filepath = '/' + userId + '/promotion/' + promo['Id'];
+          #filepath
+            - alt = 1 - alt
+              tr(class=alt ? 'odd' : 'even')
+                td(class='promolist firstcol')
+                  a(href=filepath, class='nocolor validate')
+                    div
+                      table
+                        tbody
+                          tr
+                            h3.linked #{promo['Title']}
+                          tr
+                            h4.linked #{promo['Description']}
+                td(class='promolist secondcol')
                   a(href=filepath, class='nocolor validate')
                     div
                       table
@@ -29,8 +87,4 @@ block content
                             h4.linked #{promo['CreatorName']}
                           tr
                             h5.linked #{promo['EffectiveDate']} - #{promo['ExpireDate']}
-                td(class='promolist')
-                  a(href=filepath, class='nocolor')
-                    div
-                      h4.linked #{promo['ApprovalStatus']}
   include footer

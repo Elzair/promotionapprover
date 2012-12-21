@@ -15,7 +15,7 @@ block content
           th Rate
       tbody
         - var alt = 0
-        each usec in data['PromotionUsecCodeTable']
+        each usec in data['Usecs']
           - alt = 1 - alt
           tr(class=alt ? 'odd' : 'even')
             td
@@ -33,7 +33,7 @@ block content
   div#PrintId
     h2 Print
       ul
-        each doc in data['PromotionFileUploadPrintTable']
+        each doc in data['DocumentUploads']
           - var docurl = '/media/' + doc['FileId']
           #docurl
             li
@@ -42,7 +42,7 @@ block content
   div#AudioId
     h2 Audio
       ul
-        each audio in data['PromotionFileUploadAudioTable']
+        each audio in data['AudioUploads']
           - var audurl = '/media/' + audio['FileId']
           #audurl
             li
@@ -51,7 +51,7 @@ block content
   div#VideoId
     h2 Video
       ul
-        each video in data['PromotionFileUploadVideoTable']
+        each video in data['VideoUploads']
           - var vidurl = '/media/' + video['FileId']
           #vidurl
             li
@@ -68,18 +68,16 @@ block content
     p #{data['AdvertisingCriteria']}
   div#CommunicationId
     h2 Communication Types
-    p #{data['PromotionCommunicationTypes']}
+    p #{data['CommunicationTypes']}
   div#CommunityId
     h2 Communities
-    each community in data['PromotionCommunities']
-      - var commText = community['Company'] + ': ' + community['Community']
-      p #{commText}
+      p #{data['Locations']}
   div#StatusId
     h2 Customer Status
-    p #{data['CustomerStatusTitle']}
+    p #{data['CustomerStatus']}
   div#TypeId
     h2 Customer Type
-    p #{data['CustomerTypeTitle']}
+    p #{data['CustomerType']}
   div#DatesId
     h2 Communication Dates
     p #{data['CommunicationDates']}
@@ -94,7 +92,7 @@ block content
     p #{data['RequiresTraining']}
   div#CategoryId
     h2 Category
-    p #{data['CategoryTitle']}
+    p #{data['Category']}
   div#QuickId
     h2 Quick View
     p #{data['QuickView']}

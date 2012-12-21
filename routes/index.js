@@ -19,8 +19,8 @@ exports.history = function(req, res){
   var options = {
 	host: 'compdev2',
 	port: 8087,
-	//path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-	path: '/PromotionWcfR/GetPromotions?userId=' + userId,
+	path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
+	//path: '/PromotionWcfR/GetPromotions?userId=' + userId,
 	method: 'GET'
   };
   http.request(options, function(resp){
@@ -30,14 +30,22 @@ exports.history = function(req, res){
 	  arr += chunk;
     });
 	resp.on('end', function (){
+		console.log(arr);
 	  var data = JSON.parse(arr);
-	  //for (promo in data){
-	  //  for (param in data[promo]){
-	  //    data[promo][param] = data[promo][param].replace(/&amp;/g, '&');;
-	  //  }	
-	  //}
+	  var pending = [], approved = [], rejected = [];
+	  for (promo in data){
+	    for (param in data[promo]){
+	      data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
+	    }
+      if (data[promo]['ApprovalStatus'] == 'Approval In Progress')
+        pending.push(data[promo]);
+      else if (data[promo]['ApprovalStatus'] == 'Approved')
+        approved.push(data[promo]);
+      else
+        rejected.push(data[promo]);
+	  }
 	  res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
-        enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2});
+        enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2, pending: pending, approved: approved, rejected: rejected});
 	});
   }).end();
 }
@@ -48,8 +56,8 @@ exports.promotion = function(req, res){
   var options = {
 	host: 'compdev2',
 	port: 8087,
-	//path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
-    path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
+	path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
+    //path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
 	method: 'GET'
   };
   http.request(options, function(resp){
@@ -60,7 +68,7 @@ exports.promotion = function(req, res){
     });
 	resp.on('end', function (){
 	  var data = JSON.parse(arr);
-	  console.log(JSON.stringify(data));
+	  //console.log(JSON.stringify(data));
 	  var enableApprover = false;
 	  if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
 	    enableApprover = true;
@@ -82,18 +90,18 @@ exports.decision = function(req, res){
   if (req.body.hasOwnProperty('reason'))
     reason = req.body.reason;
   if (decision == 'Approve') {
-    //path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
-    path = '/PromotionWcfR/ApprovePromotion?id=' + promotionId;
+    path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
+    //path = '/PromotionWcfR/ApprovePromotion?id=' + promotionId;
     postData = JSON.stringify({id: promotionId});
   }
   else if (decision == 'Reject') {
-    //path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
-    path = '/PromotionWcfR/RejectPromotion?id=' + promotionId + '&reason=' + encodeURIComponent(reason);
+    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
+    //path = '/PromotionWcfR/RejectPromotion?id=' + promotionId + '&reason=' + encodeURIComponent(reason);
     postData = JSON.stringify({id: promotionId, reason: reason});
   }
   var options = {
-	host: 'compdev2',
-	port: 8087,
+	  host: 'compdev2',
+	  port: 8087,
     path: path,
     method: 'POST',
     header: {
@@ -105,15 +113,14 @@ exports.decision = function(req, res){
     console.log('STATUS: ' + resp.statusCode);
     console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
-	var body = '';
+	  var arr = '';
     resp.on('data', function (chunk){
-      console.log('BODY: ' + chunk);
-	  body += chunk;
+	    arr += chunk;
     });
-	resp.on('end', function (){
-	  //var data = JSON.parse(arr);
-	  console.log('BODY: ' + JSON.stringify(body));
-	  //res.redirect('/' + userId + '/history');
+	  resp.on('end', function (){
+	    var data = JSON.parse(arr);
+	    console.log('BODY: ' + JSON.stringify(data));
+	    //res.redirect('/' + userId + '/history');
       res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
         enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail});
     });
@@ -126,42 +133,37 @@ exports.media = function(req, res){
   var options = {
 	host: 'compdev2',
 	port: 8087,
-    //path: '/api/Promotion/GetMediaByFileId?fileId=' + req.params.fileId,
-    path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
+    path: '/api/Promotion/GetMediaFile?fileId=' + req.params.fileId,
+    //path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
     method: 'GET'
   };
+  var fname = req.query.fileName;
+  var mimetype = req.query.mimeType;
+  console.log(fname + ' ' + mimetype);
   http.request(options, function(resp){
-	if (resp.statusCode != 200)
-		return;
-	resp.setEncoding('utf8');
+	  if (resp.statusCode != 200){
+		  console.log('File not found!');
+		  return;
+		}
+	  resp.setEncoding('hex');
     var arr = '';
-	resp.on('data', function (chunk){
+	  resp.on('data', function (chunk){
       arr += chunk;
-	});
-    resp.on('end', function (){
-      var data = JSON.parse(arr);
-	  var binFile;
-      var len;
-	  var fname;
-      var minify = false;
-      if (req.query.hasOwnProperty('minify'))
-        minify = req.query.minify;
-	  if (minify == true && data['UploadFileType'] == 1 && data['FileName'] != data['ImagePopupImageFileName']) {
-		binFile = new Buffer(data['PopupContent']);
-		len = data['PopupContent'].length;
-		fname = data['ImagePopupImageFileName'];
-	  }
-	  else {
-		binFile = new Buffer(data['docContent']);
-        len = data['docContent'].length;
-		fname = data['FileName'];
-	  }
-	  res.writeHead(200, {
-		'Content-Type': data['MimeType'],
-		'Content-Length': len,
-		'Content-Disposition': 'Attachment;filename='+ fname
+      console.log(JSON.stringify(chunk));
 	  });
-	  res.end(binFile);
-	});
+    resp.on('end', function (){
+      console.log(JSON.stringify(arr));
+      var len = arr.length;
+      var minify = false;
+      //if (req.query.hasOwnProperty('minify'))
+      //  minify = req.query.minify;
+	    console.log('I got here!');
+	    res.writeHead(200, {
+		    'Content-Type': mimetype,
+		    'Content-Length': len,
+		    'Content-Disposition': 'Attachment;filename='+ fname
+	    });
+	    res.end(arr);
+	  });
   }).end();
 }

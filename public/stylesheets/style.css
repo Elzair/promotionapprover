@@ -2,6 +2,9 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding: 50px;
 }
+table.promolist {
+  width: 100%;
+}
 th {
   background-color: #646464;
   color: #fff;
@@ -15,6 +18,12 @@ th {
 td.promolist {
   word-wrap: break-words;
   text-align: center;
+}
+td.firstcol {
+  width: 66%;
+}
+td.secondcol {
+  width: 33%;
 }
 a {
   text-decoration: none;

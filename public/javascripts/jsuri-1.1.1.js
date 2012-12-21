@@ -353,7 +353,7 @@ var Uri = function (uriString) {
             return query().getParamValues(key);
         },
 
-        getQueries = function (key) {
+        getQuery = function () {
             return query().toDictionary();
         },
 

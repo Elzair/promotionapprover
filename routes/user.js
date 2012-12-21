@@ -21,13 +21,13 @@ exports.login = function(req, res){
   console.log(JSON.stringify(req.body));
   var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
-	postData = JSON.stringify({UserId: req.body.userId, Hash: req.body.password});
+	postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
 	console.log(postData);
     var options = {
 	  host: 'compdev2',
 	  port: 8087,
-	  //path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-	  path: '/PromotionWcfR/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
+	  path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
+	  //path: '/PromotionWcfR/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
 	  method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -76,8 +76,8 @@ exports.validate = function(req, res, next){
     var options = {
       host: 'compdev2',
       port: 8087,
-      //path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-      path: '/PromotionWcfR/GetHash?userId=' + req.params.userId,
+      path: '/api/Utility/GetHash?userId=' + userId,
+      //path: '/PromotionWcfR/GetHash?userId=' + req.params.userId,
       method: 'GET'
     };
     http.request(options, function(resp){
