@@ -167,7 +167,21 @@ var Query = function (query) {
                 addParam(key, newVal, index);
             }
             return this;
-        };
+        },
+	
+	  /*sort = function(){
+	    var keys = [];
+	    var newparams = [];
+	 		for (var p in params)
+	      keys.push(p[0]);
+	  	keys = keys.sort();
+	  	for (var k in keys)
+	    	for (var pp in params)
+	      	if (keys[k] == params[pp][0])
+						newparams.push([keys[k], params[pp][1]]);
+	 		params = newparams;
+			return this;
+		};*/
 
     // public api
     return {
@@ -177,7 +191,8 @@ var Query = function (query) {
         addParam: addParam,
         replaceParam: replaceParam,
         toDictionary: toDictionary,
-        toString: toString
+        toString: toString//,
+				//sort: sort
     };
 };
 
@@ -386,6 +401,11 @@ var Uri = function (uriString) {
             return this;
         },
 
+				/*sortQueryParams = function () {
+					query(query().sort().toString());
+					return this;
+				},*/
+
         /*
             Serialization
         */
@@ -484,6 +504,7 @@ var Uri = function (uriString) {
         deleteQueryParam: deleteQueryParam,
         addQueryParam: addQueryParam,
         replaceQueryParam: replaceQueryParam,
+				//sortQueryParams: sortQueryParams,
         
         toString: toString,
         clone: clone

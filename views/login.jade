@@ -15,7 +15,9 @@ block content
         url = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
       else
         url = '/' + $('.userIdVal').html() + '/history';
-      $('#test').html(url);
+      $('#test').html(url); 
+      //var ut = new MyUtils('test'); 
+      //$('#test2').html(ut.toString());
       /*$.ajax({
         url: url,
         type: 'GET',
@@ -40,11 +42,15 @@ block content
               $('#test').html(localStorage.getItem('CMPHASH'));
               //var url = '/' + $('.userId').val() + [$('.promotionIdVal').html() ? '/promotion' + $('.promotionIdVal').html() : '/history'];
               var url = 'http://www.google.com?q=search&b=this';
+              var uri = new Uri(url);
               var ff = {zoo: 'hairy', bear: 'stinky'};
               //var gg = utils.sortProperties(ff);
               $('#test').html('Success! ' + JSON.stringify(ff));
+              $('#test2').html(uri.toString());
               //$('#test2').html('Wazzup!' + CryptoJS.HmacSHA512("Message", "Secret Passphrase").toString());
               //$('#test2').html(localStorage.getItem('CMPHASH'));
+              //var utb = new MyUtils('ff');
+              //$('#test2').html(utb.toString());
               //$.mobile.loadPage(url);
               return false;
             },

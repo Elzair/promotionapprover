@@ -25,43 +25,42 @@ block content
             td
               p #{usec['Rate'].toString()}
   div#ImageId
-    h2 Image
     - var popuppath = '/media/' + data['ImageId'] + '?minify=1'
     - var bigpath = '/media/' + data['ImageId']
     a(href=bigpath)
       img(src=popuppath)
   div#PrintId
     h2 Print
-      ul
-        each doc in data['DocumentUploads']
-          - var docurl = '/media/' + doc['FileId']
-          #docurl
-            li
-              a(href=docurl, data-ajax='false')
-                p.filename #{doc['FileName']}
+    ul
+      each doc in data['DocumentUploads']
+        - var docurl = '/media/' + doc['FileId']
+        #docurl
+          li
+            a(href=docurl, data-ajax='false')
+              p.filename #{doc['FileName']}
   div#AudioId
     h2 Audio
-      ul
-        each audio in data['AudioUploads']
-          - var audurl = '/media/' + audio['FileId']
-          #audurl
-            li
-              a(href=audurl, data-ajax='false') 
-                p.filename #{audio['FileName']}
+    ul
+      each audio in data['AudioUploads']
+        - var audurl = '/media/' + audio['FileId']
+        #audurl
+          li
+            a(href=audurl, data-ajax='false') 
+              p.filename #{audio['FileName']}
   div#VideoId
     h2 Video
-      ul
-        each video in data['VideoUploads']
-          - var vidurl = '/media/' + video['FileId']
-          #vidurl
-            li
-              a(href=vidurl, data-ajax='false') 
-                p.filename #{video['FileName']}
+    ul
+      each video in data['VideoUploads']
+        - var vidurl = '/media/' + video['FileId']
+        #vidurl
+          li
+            a(href=vidurl, data-ajax='false') 
+              p.filename #{video['FileName']}
   div#ServicesId
     h2 Target Services
-      ul
-        each service in data['TargetServices']
-          p #{service}
+    ul
+      each service in data['TargetServices']
+        p #{service}
   div#MarketingId
     h2 Marketing Objective
     p #{data['MarketingObjective']}
@@ -73,17 +72,17 @@ block content
     p #{data['AdvertisingCriteria']}
   div#CommunicationId
     h2 Communication Types
-      ul
-        each type in data['CommunicationTypes']
-          li 
-            p #{type}
+    ul
+      each type in data['CommunicationTypes']
+        li 
+          p #{type}
   div#CommunityId
     h2 Communities
-      ul
-        each location in data['Locations']
-          - var loc = location['LibName'] + ': ' + location['Community']
-          li
-            p #{loc}
+    ul
+      each location in data['Locations']
+        - var loc = location['LibName'] + ': ' + location['Community']
+        li
+          p #{loc}
   div#StatusId
     h2 Customer Status
     p #{data['CustomerStatus']}
