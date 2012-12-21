@@ -13,36 +13,36 @@ exports.history = function(req, res){
     enablePromotion = true;
   }
   var options = {
-	host: 'compdev2',
-	port: 8087,
-	//path: '/PromotionWcfR/GetPromotions?userId=' + userId,
-	path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
-	method: 'GET'
+	  host: 'compdev2',
+	  port: 8087,
+	  //path: '/PromotionWcfR/GetPromotions?userId=' + userId,
+	  path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
+	  method: 'GET'
   };
   http.request(options, function(resp){
     resp.setEncoding('utf8');
-	var arr = '';
+	  var arr = '';
     resp.on('data', function (chunk){
-	  arr += chunk;
+	    arr += chunk;
     });
-	resp.on('end', function (){
-		console.log(arr);
-	  var data = JSON.parse(arr);
-	  var pending = [], approved = [], rejected = [];
-	  for (promo in data){
-	    for (param in data[promo]){
-	      data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
+	  resp.on('end', function (){
+	    var data = JSON.parse(arr);
+      console.log(JSON.stringify(data));
+	    var pending = [], approved = [], rejected = [];
+	    for (promo in data){
+	      for (param in data[promo]){
+	        data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
+	      }
+        if (data[promo]['ApprovalStatus'] == 'Approval In Progress')
+          pending.push(data[promo]);
+        else if (data[promo]['ApprovalStatus'] == 'Approved')
+          approved.push(data[promo]);
+        else
+          rejected.push(data[promo]);
 	    }
-      if (data[promo]['ApprovalStatus'] == 'Approval In Progress')
-        pending.push(data[promo]);
-      else if (data[promo]['ApprovalStatus'] == 'Approved')
-        approved.push(data[promo]);
-      else
-        rejected.push(data[promo]);
-	  }
-	  res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
+	    res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
         enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2, pending: pending, approved: approved, rejected: rejected});
-	});
+	  });
   }).end();
 }
 
@@ -50,27 +50,29 @@ exports.promotion = function(req, res){
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
   var options = {
-	host: 'compdev2',
-	port: 8087,
-  //path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
-	path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
-	method: 'GET'
+	  host: 'compdev2',
+	  port: 8087,
+    //path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
+	  path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
+	  method: 'GET'
   };
   http.request(options, function(resp){
     resp.setEncoding('utf8');
-	var arr = '';
+	  var arr = '';
     resp.on('data', function (chunk){
-	  arr += chunk;
+	    arr += chunk;
     });
-	resp.on('end', function (){
-	  var data = JSON.parse(arr);
-	  //console.log(JSON.stringify(data));
-	  var enableApprover = false;
-	  if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
-	    enableApprover = true;
-	  res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
-	    enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
-	});
+	  resp.on('end', function (){
+	    var data = JSON.parse(arr);
+	    console.log(JSON.stringify(data));
+	    var enableApprover = false;
+      for (approver in data['Approvers']){
+        if (data['ApprovalStatus'] != 3 && approver['UserId'] == userId && (approver['ApprovalStatus'] == 1 || approver['Role'].toUpperCase() == 'ADMIN'))
+          enableApprover = true;
+      }
+	    res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
+	      enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
+	  });
   }).end();
 };
 
@@ -149,14 +151,14 @@ exports.media = function(req, res){
       var minify = false;
       if (req.query.hasOwnProperty('minify'))
         minify = req.query.minify;
-	    if (minify == true && data['UploadFileType'] == 1 && data['FileName'] != data['ImagePopupImageFileName']) {
+	    if (minify == true && data['FileType'] == 1 && data['FileName'] != data['ImagePopupImageFileName']) {
 		    binFile = new Buffer(data['PopupContent'], 'base64');
-		    len = data['PopupContent'].length;
+		    len = binFile.length;
 		    fname = data['ImagePopupImageFileName'];
 	    }
 	    else {
 		    binFile = new Buffer(data['docContent'], 'base64');
-        len = data['docContent'].length;
+        len = binFile.length;
 		    fname = data['FileName'];
 	    }
 	    res.writeHead(200, {

@@ -57,6 +57,11 @@ block content
             li
               a(href=vidurl, data-ajax='false') 
                 p.filename #{video['FileName']}
+  div#ServicesId
+    h2 Target Services
+      ul
+        each service in data['TargetServices']
+          p #{service}
   div#MarketingId
     h2 Marketing Objective
     p #{data['MarketingObjective']}
@@ -68,10 +73,17 @@ block content
     p #{data['AdvertisingCriteria']}
   div#CommunicationId
     h2 Communication Types
-    p #{data['CommunicationTypes']}
+      ul
+        each type in data['CommunicationTypes']
+          li 
+            p #{type}
   div#CommunityId
     h2 Communities
-      p #{data['Locations']}
+      ul
+        each location in data['Locations']
+          - var loc = location['LibName'] + ': ' + location['Community']
+          li
+            p #{loc}
   div#StatusId
     h2 Customer Status
     p #{data['CustomerStatus']}
@@ -80,10 +92,12 @@ block content
     p #{data['CustomerType']}
   div#DatesId
     h2 Communication Dates
-    p #{data['CommunicationDates']}
+    - var communicationdates = data['StartDate'] + ' - ' + data['EndDate'] 
+    p #{communicationdates}
   div#ExpirationId
-    h2 Expiration Date
-    p #{data['ExpirationDate']}
+    h2 Effective Dates
+    - var effectivedates = data['EffectiveDate'] + ' - ' + data['ExpireDate']
+    p #{effectivedates}
   div#ContractId
     h2 Requires Contract
     p #{data['RequiresContract']}
