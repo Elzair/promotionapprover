@@ -5,10 +5,6 @@ var http = require('http')
  * GET users listing.
  */
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
-};
-
 exports.loginPrompt = function(req, res){
   var promotionId = '';
   if (req.query.hasOwnProperty('promotionId'))
@@ -21,34 +17,34 @@ exports.login = function(req, res){
   console.log(JSON.stringify(req.body));
   var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
-	postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
-	console.log(postData);
+	  postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
+	  console.log(postData);
     var options = {
-	  host: 'compdev2',
-	  port: 8087,
-	  path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
-	  //path: '/PromotionWcfR/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
-	  method: 'POST',
+	    host: 'compdev2',
+	    port: 8087,
+	    //path: '/PromotionWcfR/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
+	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
+	    method: 'POST',
       header: {
         'Content-Type': 'application/json',
         'Content-Length': postData.length
       }
-	};		
+	  };		
     var postReq = http.request(options, function(resp){
-	  resp.setEncoding('utf8');
+	    resp.setEncoding('utf8');
       var arr = '';
       resp.on('data', function (chunk){
-	    arr += chunk;
-	  });
-	  resp.on('end', function (){
-		console.log(misc.replaceQuotes(arr));
-	    var data = JSON.parse(arr);
-	    console.log('data: ' + JSON.stringify(data));
+        arr += chunk;
+      });
+	    resp.on('end', function (){
+		    console.log(misc.replaceQuotes(arr));
+	      var data = JSON.parse(arr);
+	      console.log('data: ' + JSON.stringify(data));
         var returnCode = 200;
         if (data['Hash'] == 'ERROR')
           returnCode = 500;
-	    res.writeHead(returnCode, {
-		  'Content-Type': 'application/json',
+	      res.writeHead(returnCode, {
+		      'Content-Type': 'application/json',
         });
         res.end(JSON.stringify(data));
       });
@@ -76,8 +72,8 @@ exports.validate = function(req, res, next){
     var options = {
       host: 'compdev2',
       port: 8087,
-      path: '/api/Utility/GetHash?userId=' + userId,
       //path: '/PromotionWcfR/GetHash?userId=' + req.params.userId,
+      path: '/api/Utility/GetHash?userId=' + userId,
       method: 'GET'
     };
     http.request(options, function(resp){
@@ -94,8 +90,8 @@ exports.validate = function(req, res, next){
           url = url + q + '=' + req.query[q] + '&';
         var computedSignature = crypto.createHmac('sha512', hashKey).update(url.substring(0, url.substring.length-1)).digest('hex');
         console.log(returnedSignature + ' ' + JSON.stringify(computedSignature));
-	    //res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
-	  });
+	      //res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
+	    });
     }).end();
   }
   next();

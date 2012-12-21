@@ -4,7 +4,7 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
+  , promo = require('./routes/promo')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path');
@@ -34,11 +34,10 @@ app.configure('development', function(){
 app.get('/:userId/login', user.loginPrompt);
 app.post('/:userId/login', user.login);
 app.all('/:userId/logout', user.logout);
-app.get('/:userId/history', routes.history);
-app.get('/:userId/promotion/:promotionId', routes.promotion);
-app.post('/:userId/promotion/:promotionId/decision', routes.decision);
-app.get('/media/:fileId', routes.media);
-app.get('/users', user.list);
+app.get('/:userId/history', promo.history);
+app.get('/:userId/promotion/:promotionId', promo.promotion);
+app.post('/:userId/promotion/:promotionId/decision', promo.decision);
+app.get('/media/:fileId', promo.media);
 /*app.get('*', function(req,res){
   res.send('This page or resource does not exist!', 404);
 });*/
