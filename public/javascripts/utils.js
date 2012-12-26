@@ -28,7 +28,7 @@ var MyUtils = function() {
 	    return '';
 	  uri = new Uri(url).deleteQueryParam('timeStamp', 'signature').addQueryParam('timeStamp', new Date().getTime().toString());
 	  uri.setQuery(sortProperties(uri.getQueryParams()));
-    return uri.addQueryParam('signature', hex_hmac_md5(hash, uri.toString())).toString();
+    return uri.addQueryParam('signature', hex_hmac_sha512(hash, uri.toString())).toString();
 	},
 	
 	toString = function(){

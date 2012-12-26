@@ -98,10 +98,8 @@ exports.validate = function(req, res, next){
           url = url + div + q + '=' + queries[q];
           div = '&';
         }
-        console.log(url + ' ' + JSON.parse(hashKey));
-        //var computedSignature = crypto.createHmac('md5', hashKey).update(url).digest('hex');
-        //var computedSignature = hmac.getSignature().HmacSHA512(url, hashKey);
-        var computedSignature = hmac.hex_hmac_md5(passPhrase, url);
+        console.log(url + ' ' + passPhrase);
+        var computedSignature = hmac.hex_hmac_sha512(passPhrase, url);
         console.log(returnedSignature + ' ' + computedSignature);
         next();
 	      //res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
