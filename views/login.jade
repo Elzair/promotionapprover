@@ -9,15 +9,19 @@ block content
   p(id='test2')
   p(id='error', class='error')
   script(type='text/javascript')
-    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH')){
+    $('.noscript').css('display', 'none');
+    if (typeof(Storage) !== 'undefined'){
+      $('.nowebstorage').css('display', 'none');
+      $('.pagecontainer').css('display', 'inline');
+    }
+  script(type='text/javascript')
+    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH')) {
       var url = ''
       if ($('.promotionIdVal').html() != '')
         url = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
       else
         url = '/' + $('.userIdVal').html() + '/history';
-      $('#test').html(url); 
-      //var ut = new MyUtils('test'); 
-      //$('#test2').html(ut.toString());
+      $('#test').html(url);
       /*$.ajax({
         url: url,
         type: 'GET',
@@ -39,19 +43,17 @@ block content
             success: function(data){
               $('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
-              $('#test').html(localStorage.getItem('CMPHASH'));
-              //var url = '/' + $('.userId').val() + [$('.promotionIdVal').html() ? '/promotion' + $('.promotionIdVal').html() : '/history'];
-              var url = 'http://www.google.com?q=search&b=this';
-              var uri = new Uri(url);
-              var ff = {zoo: 'hairy', bear: 'stinky'};
-              //var gg = utils.sortProperties(ff);
-              $('#test').html('Success! ' + JSON.stringify(ff));
-              $('#test2').html(uri.toString());
-              //$('#test2').html('Wazzup!' + CryptoJS.HmacSHA512("Message", "Secret Passphrase").toString());
-              //$('#test2').html(localStorage.getItem('CMPHASH'));
-              //var utb = new MyUtils('ff');
-              //$('#test2').html(utb.toString());
-              //$.mobile.loadPage(url);
+              var ut = new MyUtils();
+              var url = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
+              url = ut.completeUrl(url, localStorage.getItem('CMPHASH'));
+              $('#test2').html(url + ' ' + localStorage.getItem('CMPHASH'));
+              $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data){
+                  //window.location = url;
+                }
+              });
               return false;
             },
             error: function(data){
@@ -67,7 +69,7 @@ block content
             $('.error').html(($('.error').html() == '' ? '' : $('.error').html() + '<br>') + 'You must enter a password!');
           return false;
         }
-      })
+      });
     });
     $(function(){
       $('.lastInput').bind('keyup', function(e){
@@ -80,6 +82,6 @@ block content
     form(method='post', action=postUrl, class='loginForm')
       input(type='text', name='userId', id='userId', class='userId textInput', placeholder='Username')
       input(type='password', name='password', id='password', class='password textInput lastInput', placeholder='Password')
-      input(type='hidden', id='promotionId') #{promotionId}
+      input(type='hidden', id='promotionId', class='promotionId', val=promotionId)
       input(type='button', id='submitButton', class='button', value='Submit')
   include footer

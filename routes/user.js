@@ -1,5 +1,6 @@
 var http = require('http')
   , crypto = require('crypto')
+  , hmac = require('../utils/hmac')
   , misc = require('../utils/misc');
 /*
  * GET users listing.
@@ -63,8 +64,13 @@ exports.logout = function(req, res){
 }
 
 exports.validate = function(req, res, next){
-  console.log(req.path);
-  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('signature') || !req.query.hasOwnProperty('userId')){
+	var d = '?', s = req.path;
+	for (var qq in req.query){
+		s = s + d + qq + '=' + req.query[qq];
+		d = '&';
+	}
+  console.log('Beginning validation! ' + s);
+  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('signature') || !req.params.hasOwnProperty('userId')){
     res.render('login', {title: 'Login', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0}); 
   }
@@ -73,26 +79,33 @@ exports.validate = function(req, res, next){
       host: 'compdev2',
       port: 8087,
       //path: '/PromotionWcfR/GetHash?userId=' + req.params.userId,
-      path: '/api/Utility/GetHash?userId=' + userId,
+      path: '/api/Utility/GetHash?userId=' + req.params.userId,
       method: 'GET'
     };
     http.request(options, function(resp){
       resp.setEncoding('utf8');
       var hashKey = '';
       resp.on('data', function (chunk){
-      hashKey += chunk;
+        hashKey += chunk;
       });
       resp.on('end', function (){
+        var passPhrase = JSON.parse(hashKey);
         var returnedSignature = req.query['signature'];
-        req.query = misc.dictionarySort(misc.deleteElement(req.query, 'signature')); // remove their signature from url & sort query parameters
-        var url = req.path + '?';
-        for (q in req.query)
-          url = url + q + '=' + req.query[q] + '&';
-        var computedSignature = crypto.createHmac('sha512', hashKey).update(url.substring(0, url.substring.length-1)).digest('hex');
-        console.log(returnedSignature + ' ' + JSON.stringify(computedSignature));
+        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'signature')); // remove their signature from url & sort query parameters
+        var url = req.path;
+        var div = '?'
+        for (q in queries){
+          url = url + div + q + '=' + queries[q];
+          div = '&';
+        }
+        console.log(url + ' ' + JSON.parse(hashKey));
+        //var computedSignature = crypto.createHmac('md5', hashKey).update(url).digest('hex');
+        //var computedSignature = hmac.getSignature().HmacSHA512(url, hashKey);
+        var computedSignature = hmac.hex_hmac_md5(passPhrase, url);
+        console.log(returnedSignature + ' ' + computedSignature);
+        next();
 	      //res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
 	    });
     }).end();
   }
-  next();
 }

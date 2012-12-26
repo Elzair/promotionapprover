@@ -30,7 +30,7 @@ var Query = function (query) {
             }
 
             if (typeof (q) === 'object') {
-                for (k in q)
+                for (var k in q)
                     if (q.hasOwnProperty(k))
                         arr.push([k, q[k]]);
                 return arr;
@@ -66,11 +66,10 @@ var Query = function (query) {
             return s.length > 0 ? '?' + s : s;
         },
 
-        toDictionary = function () {
-            var d = {};
+        toJson = function () {
+            var d = new Object(), i;
             for (i = 0; i < params.length; i++) {
-                param = params[i];
-                d[param[0]] = param[1];
+                d[params[i][0]] = params[i][1];
             }
             return d;
         },
@@ -167,21 +166,7 @@ var Query = function (query) {
                 addParam(key, newVal, index);
             }
             return this;
-        },
-	
-	  /*sort = function(){
-	    var keys = [];
-	    var newparams = [];
-	 		for (var p in params)
-	      keys.push(p[0]);
-	  	keys = keys.sort();
-	  	for (var k in keys)
-	    	for (var pp in params)
-	      	if (keys[k] == params[pp][0])
-						newparams.push([keys[k], params[pp][1]]);
-	 		params = newparams;
-			return this;
-		};*/
+        };
 
     // public api
     return {
@@ -190,9 +175,8 @@ var Query = function (query) {
         deleteParam: deleteParam,
         addParam: addParam,
         replaceParam: replaceParam,
-        toDictionary: toDictionary,
-        toString: toString//,
-				//sort: sort
+        toJson: toJson,
+        toString: toString
     };
 };
 
@@ -368,8 +352,8 @@ var Uri = function (uriString) {
             return query().getParamValues(key);
         },
 
-        getQuery = function () {
-            return query().toDictionary();
+        getQueryParams = function (key) {
+            return query().toJson();
         },
 
         deleteQueryParam = function (key, val) {
@@ -400,11 +384,6 @@ var Uri = function (uriString) {
 
             return this;
         },
-
-				/*sortQueryParams = function () {
-					query(query().sort().toString());
-					return this;
-				},*/
 
         /*
             Serialization
@@ -498,13 +477,12 @@ var Uri = function (uriString) {
         setQuery: setQuery,
         setAnchor: setAnchor,
         
-        getQueries: getQueries,
+        getQueryParams: getQueryParams,
         getQueryParamValue: getQueryParamValue,
         getQueryParamValues: getQueryParamValues,
         deleteQueryParam: deleteQueryParam,
         addQueryParam: addQueryParam,
         replaceQueryParam: replaceQueryParam,
-				//sortQueryParams: sortQueryParams,
         
         toString: toString,
         clone: clone
