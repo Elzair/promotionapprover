@@ -19,14 +19,11 @@ html
           var url = new Uri(this.href).setProtocol('').setHost('').setPort('').toString();
           var link = uta.completeUrl(url, localStorage.getItem('CMPHASH'));
           //$('.error').html(link);
-          window.location = link;
+          //window.location = link;
+          $('.error').html(localStorage.getItem('CMPHASH'));
           return false; 
         });
       });
-  body		
-    div(class='noscript')
-      p(class='error') You must enable Javascript to use this app!
-    div(class='nowebstorage')
-      p(class='error') You must use a browser that supports Web Storage!
-    div(data-role='page', class='pagecontainer')
+  body	
+    div(data-role='page')
       block content

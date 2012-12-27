@@ -66,7 +66,7 @@ exports.validate = function(req, res, next){
   console.log('Beginning validation of this url: ' + req.originalUrl);
   if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || !req.params.hasOwnProperty('userId')){
     console.log('Getting login info!');
-    res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+    res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0}); 
   }
   else {
@@ -92,17 +92,26 @@ exports.validate = function(req, res, next){
           url = url + div + q + '=' + queries[q];
           div = '&';
         }
-        console.log(url);
+        console.log(url + ' ' + arr);
         var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
         console.log(returnedHash + ' ' + computedHash);
         if (returnedHash == computedHash)
           next();
         else{
           console.log('Incorrect info! Retrieving new login information!');
-          res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+          res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
 			      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
         }
 	    });
     }).end();
   }
+}
+
+exports.valid = function(req, res){
+	var data = JSON.stringify({Status: 'Success'});
+	res.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Content-Length': data.length
+  });
+  res.end(data);
 }

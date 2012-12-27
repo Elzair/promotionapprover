@@ -23,12 +23,14 @@ var MyUtils = function() {
 	  return obj.hasOwnProperty(p) ? obj[p] : '';
 	},
 
-	completeUrl = function(url, hash){
-	  if (url == null || url == '' || hash == null || hash == '')
+	completeUrl = function(url, key){
+	  if (url == null || url == '' || key == null || key == '')
 	    return '';
 	  uri = new Uri(url).deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', new Date().getTime().toString());
 	  uri.setQuery(sortProperties(uri.getQueryParams()));
-    return uri.addQueryParam('hash', hex_hmac_sha512(hash, uri.toString())).toString();
+    var hash = hex_hmac_sha512(key, uri.toString());
+    $('.error').html(hash);
+    return uri.addQueryParam('hash', hash).toString();
 	},
 	
 	toString = function(){

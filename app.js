@@ -7,9 +7,16 @@ var express = require('express')
   , promo = require('./routes/promo')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , https = require('https')
+  , path = require('path')
+  , fs = require('fs');
 
 var app = express();
+
+var options = {
+    key: fs.readFileSync('ssl/privatekey.pem')
+  , cert: fs.readFileSync('ssl/certificate.pem')
+};
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -37,11 +44,12 @@ app.all('/:userId/logout', user.logout);
 app.get('/:userId/history', user.validate, promo.history);
 app.get('/:userId/promotion/:promotionId', user.validate, promo.promotion);
 app.post('/:userId/promotion/:promotionId/decision', user.validate, promo.decision);
+app.get('/:userId/valid', user.validate, user.valid);
 app.get('/media/:fileId', promo.media);
 /*app.get('*', function(req,res){
   res.send('This page or resource does not exist!', 404);
 });*/
 
-http.createServer(app).listen(app.get('port'), function(){
+https.createServer(options, app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

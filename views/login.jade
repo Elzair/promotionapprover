@@ -7,34 +7,34 @@ block content
   p(id='promotionIdVal', class='promotionIdVal', hidden) #{promotionId}
   p(id='test')
   p(id='test2')
-  p(id='error', class='error')
+  p(class='error') This website requires Javascript & Web Storage to work. Please enable them or use a browser that supports them.
   script(type='text/javascript')
-    $('.noscript').css('display', 'none');
-    if (typeof(Storage) !== 'undefined'){
-      $('.nowebstorage').css('display', 'none');
-      $('.pagecontainer').css('display', 'inline');
-    }
+    $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
+    if (typeof(Storage) !== 'undefined')
+      $('.error').html('');
   script(type='text/javascript')
-    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH')) {
-      var url = ''
+    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH') && localStorage.getItem('CMPHASH') != null) {
+      var uri = ''
       if ($('.promotionIdVal').html() != '')
-        url = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
+        uri = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
       else
-        url = '/' + $('.userIdVal').html() + '/history';
+        uri = '/' + $('.userIdVal').html() + '/history';
       var ut = new MyUtils();
-      url = ut.completeUrl(url, localStorage.getItem('CMPHASH'));
-      $('#test').html(url);
-      window.location = url
-      /*$.ajax({
-        url: url,
+      uri = ut.completeUrl(uri, localStorage.getItem('CMPHASH'));
+      //$('#test').html(uri);
+      $.ajax({
+        url: ut.completeUrl('/' + $('.userIdVal').html() + '/valid', localStorage.getItem('CMPHASH')),
         type: 'GET',
         success: function(data){
-          window.location = url;
-        }
-      });*/
+          window.location = uri;
+        },
+        error: function(data){
+          //$('.error').html('An error occurred. Please log-in again.');
+        } 
+      });
     }
-    else
-      $('#test').html('Wazzup!');
+    //else
+    //  $('.error').html('Please log in.');
     $(function(){
       $('.button').click(function(){
         $('.error').html('');
@@ -47,15 +47,15 @@ block content
               //$('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
               var ut = new MyUtils();
-              var url = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
-              url = ut.completeUrl(url, localStorage.getItem('CMPHASH'));
-              $('#test2').html(url + ' ' + localStorage.getItem('CMPHASH'));
-              window.location = url;
+              var uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
+              uri = ut.completeUrl(uri, localStorage.getItem('CMPHASH'));
+              //$('#test2').html(uri + ' ' + localStorage.getItem('CMPHASH'));
+              //window.location = uri;
               /*$.ajax({
-                url: url,
+                url: uri,
                 type: 'GET',
                 success: function(data){
-                  //window.location = url;
+                  //window.location = uri;
                 }
               });*/
               return false;
@@ -80,6 +80,9 @@ block content
         if (e.which == 13)
           $('.button').click();
       });
+    });
+    $(function(){
+      $('.userId').focus();
     });
   div(class='login')
     - var postUrl = '/';

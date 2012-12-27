@@ -64,7 +64,7 @@ exports.promotion = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-	    //console.log(JSON.stringify(data));
+	    console.log(JSON.stringify(data));
 	    var enableApprover = false;
       for (approver in data['Approvers']){
         if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
@@ -75,7 +75,7 @@ exports.promotion = function(req, res){
 	      enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
 	  });
   }).end();
-};
+}
 
 exports.decision = function(req, res){
   console.log(JSON.stringify(req.params) + JSON.stringify(req.body));
@@ -126,7 +126,7 @@ exports.decision = function(req, res){
   });
   postReq.write(postData);
   postReq.end();
-};
+}
 
 exports.media = function(req, res){
   var options = {
