@@ -7,15 +7,13 @@ var http = require('http')
  */
 
 exports.loginPrompt = function(req, res){
-  var promotionId = '';
-  if (req.query.hasOwnProperty('promotionId'))
-    promotionId = req.query.promotionId;
-  res.render('login', {title: 'Login', userId: req.params.userId, promotionId: misc.getProperty(req.query, 'promotionId'),
+	console.log('Showing Login prompt!');
+  res.render('login', {title: 'Login', data: '', userId: req.params.userId, promotionId: misc.getProperty(req.query, 'promotionId'),
     enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
 }
 
 exports.login = function(req, res){
-  console.log(JSON.stringify(req.body));
+  console.log('Logging in with info: ' + JSON.stringify(req.body));
   var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
 	  postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
@@ -54,24 +52,21 @@ exports.login = function(req, res){
     postReq.end();
   }
   else
-    res.render('login', {title: 'Login', userId: misc.getProperty(req.body, 'userId'), promotionId: misc.getProperty(req.body, 'promotionId'),
+    res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), promotionId: misc.getProperty(req.body, 'promotionId'),
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
 }
 
 exports.logout = function(req, res){
-  res.render('logout', {title: 'Logout', data: data, userId: misc.getProperty(req.params, 'userId'), promotionId: '',
-    enablePromotion: false, enableHistory: false, enableLogout: false, active: 3});
+	console.log('Now logging out!');
+  res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: '',
+    enablePromotion: false, enableHistory: false, enableLogout: true, active: 3});
 }
 
 exports.validate = function(req, res, next){
-	var d = '?', s = req.path;
-	for (var qq in req.query){
-		s = s + d + qq + '=' + req.query[qq];
-		d = '&';
-	}
-  console.log('Beginning validation! ' + s);
-  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('signature') || !req.params.hasOwnProperty('userId')){
-    res.render('login', {title: 'Login', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+  console.log('Beginning validation of this url: ' + req.originalUrl);
+  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || !req.params.hasOwnProperty('userId')){
+    console.log('Getting login info!');
+    res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0}); 
   }
   else {
@@ -84,25 +79,29 @@ exports.validate = function(req, res, next){
     };
     http.request(options, function(resp){
       resp.setEncoding('utf8');
-      var hashKey = '';
+      var arr = '';
       resp.on('data', function (chunk){
-        hashKey += chunk;
+        arr += chunk;
       });
       resp.on('end', function (){
-        var passPhrase = JSON.parse(hashKey);
-        var returnedSignature = req.query['signature'];
-        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'signature')); // remove their signature from url & sort query parameters
+        var returnedHash = req.query['hash'];
+        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); // remove their signature from url & sort query parameters
         var url = req.path;
         var div = '?'
         for (q in queries){
           url = url + div + q + '=' + queries[q];
           div = '&';
         }
-        console.log(url + ' ' + passPhrase);
-        var computedSignature = hmac.hex_hmac_sha512(passPhrase, url);
-        console.log(returnedSignature + ' ' + computedSignature);
-        next();
-	      //res.render('promotionlist', {title: 'History', data: data, enablePromotion: enablePromotion, userId: userId, promotionId: promotionId});
+        console.log(url);
+        var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
+        console.log(returnedHash + ' ' + computedHash);
+        if (returnedHash == computedHash)
+          next();
+        else{
+          console.log('Incorrect info! Retrieving new login information!');
+          res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+			      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
+        }
 	    });
     }).end();
   }

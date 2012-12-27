@@ -3,6 +3,8 @@ extends layout
 block content
   div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
     h1 #{data['Title']}
+  div
+    p(class='error')
   div#DescId
     h2 Description
     p #{data['Description']}

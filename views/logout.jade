@@ -3,16 +3,16 @@ extends layout
 block content
   div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
     h1= title
-  p(id='userId', class='userId', hidden) #{userId}
   script(type='text/javascript')
     document.ready(function(){
       if (typeof(Storage) !== 'undefined' && localStorage.hasOwnProperty('CMPHASH'))
         localStorage.removeItem('CMPHASH');
-      setTimeout(function(){
-        window.location.replace('/' + $('.userId').text() + '/login')
-      });
+      //setTimeout(function(){
+      //  window.location = '/' + $('.userId').text() + '/login';
+      //}, 5000);
     });
   div
     h2(class='centered') You have successfully logged out.
+    - var loginUrl = '/' + userId + '/login'
     a(class='centered', href=loginUrl) Click here or be automatically redirected in five seconds.
   include footer

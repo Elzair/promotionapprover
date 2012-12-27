@@ -21,7 +21,10 @@ block content
         url = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
       else
         url = '/' + $('.userIdVal').html() + '/history';
+      var ut = new MyUtils();
+      url = ut.completeUrl(url, localStorage.getItem('CMPHASH'));
       $('#test').html(url);
+      window.location = url
       /*$.ajax({
         url: url,
         type: 'GET',
@@ -41,23 +44,24 @@ block content
             type: 'POST',
             data: {userId: $('.userId').val(), password: $('.password').val()},
             success: function(data){
-              $('#test').html('Success!' + JSON.stringify(data));
+              //$('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
               var ut = new MyUtils();
               var url = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
               url = ut.completeUrl(url, localStorage.getItem('CMPHASH'));
               $('#test2').html(url + ' ' + localStorage.getItem('CMPHASH'));
-              $.ajax({
+              window.location = url;
+              /*$.ajax({
                 url: url,
                 type: 'GET',
                 success: function(data){
                   //window.location = url;
                 }
-              });
+              });*/
               return false;
             },
             error: function(data){
-              $('#test').html('Something went wrong: ' + JSON.stringify(data));
+              $('.error').html('Something went wrong: ' + JSON.stringify(data));
               return false;
             }
           });

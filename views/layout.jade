@@ -12,6 +12,17 @@ html
     script(type='text/javascript', src='/javascripts/sha512.js')
     script(type='text/javascript', src='/javascripts/jsuri-1.1.1.js')
     script(type='text/javascript', src='/javascripts/utils.js')
+    script(type='text/javascript')
+      $(function(){
+        $('.validate').click(function(){
+          var uta = new MyUtils();
+          var url = new Uri(this.href).setProtocol('').setHost('').setPort('').toString();
+          var link = uta.completeUrl(url, localStorage.getItem('CMPHASH'));
+          //$('.error').html(link);
+          window.location = link;
+          return false; 
+        });
+      });
   body		
     div(class='noscript')
       p(class='error') You must enable Javascript to use this app!

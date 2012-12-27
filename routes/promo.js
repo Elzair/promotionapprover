@@ -1,17 +1,16 @@
-var http = require('http');
+var http = require('http')
+  , misc = require('../utils/misc');
 /*
  * GET home page.
  */
 
 exports.history = function(req, res){
+	console.log('Retrieving history for user: ' + req.params.userId);
   var userId = req.params.userId;
-  var promotionId = null;
+  var promotionId = misc.getProperty(req.query, 'lastPromotionId');
   var enablePromotion = false;
-  if (req.query.hasOwnProperty('lastPromotionId'))
-  {
-    promotionId = req.query.lastPromotionId;
+  if (promotionId != '')
     enablePromotion = true;
-  }
   var options = {
 	  host: 'compdev2',
 	  port: 8087,
@@ -27,7 +26,7 @@ exports.history = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-      console.log(JSON.stringify(data));
+      //console.log(JSON.stringify(data));
 	    var pending = [], approved = [], rejected = [];
 	    for (promo in data){
 	      for (param in data[promo]){
@@ -47,6 +46,7 @@ exports.history = function(req, res){
 }
 
 exports.promotion = function(req, res){
+  console.log('Retrieving info on promotion ' + req.params.promotionId);
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
   var options = {
@@ -64,10 +64,11 @@ exports.promotion = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-	    console.log(JSON.stringify(data));
+	    //console.log(JSON.stringify(data));
 	    var enableApprover = false;
       for (approver in data['Approvers']){
-        if (data['ApprovalStatus'] != 3 && approver['UserId'] == userId && (approver['ApprovalStatus'] == 1 || approver['Role'].toUpperCase() == 'ADMIN'))
+        if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
+           (data['Approvers'][approver]['ApprovalStatus'] == 1 || data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
           enableApprover = true;
       }
 	    res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,

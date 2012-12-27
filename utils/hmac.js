@@ -23,7 +23,7 @@ function b64_sha512(s)    { return rstr2b64(rstr_sha512(str2rstr_utf8(s))); }
 function any_sha512(s, e) { return rstr2any(rstr_sha512(str2rstr_utf8(s)), e);}
 exports.hex_hmac_sha512 = function (k, d)
   { return rstr2hex(rstr_hmac_sha512(str2rstr_utf8(k), str2rstr_utf8(d))); }
-function b64_hmac_sha512(k, d)
+exports.b64_hmac_sha512 = function (k, d)
   { return rstr2b64(rstr_hmac_sha512(str2rstr_utf8(k), str2rstr_utf8(d))); }
 function any_hmac_sha512(k, d, e)
   { return rstr2any(rstr_hmac_sha512(str2rstr_utf8(k), str2rstr_utf8(d)), e);}
