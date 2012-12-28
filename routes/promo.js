@@ -64,15 +64,19 @@ exports.promotion = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-	    console.log(JSON.stringify(data));
-	    var enableApprover = false;
-      for (approver in data['Approvers']){
-        if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
-           (data['Approvers'][approver]['ApprovalStatus'] == 1 || data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
-          enableApprover = true;
-      }
-	    res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
-	      enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
+      console.log(JSON.stringify(data));
+	    if (resp.statusCode != 200)
+	      res.status(404).render('error', {title: 'Promotion Error', data: 'Cannot find this promotion!'});
+	    else{
+	      var enableApprover = false;
+        for (approver in data['Approvers']){
+          if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
+             (data['Approvers'][approver]['ApprovalStatus'] == 1 || data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
+            enableApprover = true;
+        }
+	      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
+	        enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
+	    }
 	  });
   }).end();
 }
@@ -90,13 +94,13 @@ exports.decision = function(req, res){
     reason = req.body.reason;
   if (decision == 'Approve') {	
     //path = '/PromotionWcfR/ApprovePromotion?id=' + promotionId;
-    path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId;
-    postData = JSON.stringify({id: promotionId});
+    path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId + '&userId=' + userId;
+    postData = JSON.stringify({promotionId: promotionId, userId: userId});
   }
   else if (decision == 'Reject') {
     //path = '/PromotionWcfR/RejectPromotion?id=' + promotionId + '&reason=' + encodeURIComponent(reason);
-    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&reason=' + encodeURIComponent(reason);
-    postData = JSON.stringify({id: promotionId, reason: reason});
+    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&userId=' + userId + '&reason=' + encodeURIComponent(reason);
+    postData = JSON.stringify({id: promotionId, userId: userId, reason: reason});
   }
   var options = {
 	  host: 'compdev2',
@@ -113,15 +117,18 @@ exports.decision = function(req, res){
     console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
 	  var arr = '';
-    resp.on('data', function (chunk){
+    resp.on('data', function(chunk){
 	    arr += chunk;
     });
-	  resp.on('end', function (){
-	    var data = JSON.parse(arr);
-	    console.log('BODY: ' + JSON.stringify(data));
+	  resp.on('end', function(){
+	    var data = '';
+	    //console.log('BODY: ' + JSON.stringify(data));
 	    //res.redirect('/' + userId + '/history');
       res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
         enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail});
+    });
+    resp.on('error', function(e){
+	    res.render('error', {title: 'Approve/Reject Error', data: JSON.stringify(e)});
     });
   });
   postReq.write(postData);
