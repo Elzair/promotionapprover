@@ -21,8 +21,8 @@ function completeUrl(url, key){
 	uri = new Uri(url).deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', new Date().getTime().toString());
 	uri.setQuery(sortProperties(uri.getQueryParams()));
   //var hash = hex_hmac_sha512(key, uri.toString());
-  var hash = new Hashes.SHA512().hex_hmac(uri.toString(), key);
+  //$('.error').html(uri.toString());
+  hash = new Hashes.SHA256().hex_hmac(uri.toString(), key);
   uri = uri.addQueryParam('hash', hash);
-  $('.error').html(hash);
   return uri.toString();
 }

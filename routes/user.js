@@ -94,14 +94,17 @@ exports.validate = function(req, res, next){
         }
         console.log(url + ' ' + arr);
         //var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
-        var computedHash = new Hashes.SHA512().hex_hmac(url, JSON.parse(arr));
+        var computedHash = new Hashes.SHA256().hex_hmac(url, JSON.parse(arr));
         console.log(returnedHash + ' ' + computedHash);
         if (returnedHash == computedHash)
           next();
         else{
           console.log('Incorrect info! Retrieving new login information!');
-          res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
-			      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
+          //if (misc.getProperty(req.query, 'validationTest') != '1')
+            res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+			        enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
+			    //else
+			     // res.status(500).end();
         }
 	    });
 	    resp.on('error', function(){
@@ -114,5 +117,5 @@ exports.validate = function(req, res, next){
 exports.valid = function(req, res){
 	console.log('User is authenticated.');
 	var data = JSON.stringify({Status: 'Success'});
-	res.status(200);
+	res.status(200).end();
 }

@@ -51,14 +51,11 @@ app.get('/login', user.login);
 app.get('/:userId/login', user.loginPrompt);
 app.post('/:userId/login', user.login);
 app.all('/:userId/logout', user.logout);
-app.get('/:userId/history', promo.history);
-app.get('/:userId/promotion/:promotionId', promo.promotion);
-app.post('/:userId/promotion/:promotionId/decision', promo.decision);
-app.get('/:userId/valid', user.valid);
+app.get('/:userId/history', user.validate, promo.history);
+app.get('/:userId/promotion/:promotionId', user.validate, promo.promotion);
+app.post('/:userId/promotion/:promotionId/decision', user.validate, promo.decision);
+app.get('/:userId/valid', user.validate, user.valid);
 app.get('/media/:fileId', promo.media);
-/*app.get('*', function(req,res){
-  res.send('This page or resource does not exist!', 404);
-});*/
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

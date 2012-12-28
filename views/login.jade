@@ -12,30 +12,26 @@ block content
     $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
     if (typeof(Storage) !== 'undefined')
       $('.error').html('');
-    if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH') && localStorage.getItem('CMPHASH') != null) {
-      var uri = '';
-      if ($('.promotionIdVal').html() != '')
-        uri = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
-      else
-        uri = '/' + $('.userIdVal').html() + '/history';
-      uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
-      //$('#test').html(uri);
+    if (typeof(Storage) !== 'undefined' && $('.userIdVal').html() != '' && 
+        localStorage.hasOwnProperty('CMPHASH') && 
+        localStorage.getItem('CMPHASH') != null) {
       $.ajax({
-        url: completeUrl('/' + $('.userIdVal').html() + '/valid', localStorage.getItem('CMPHASH')),
+        url: completeUrl('/' + $('.userIdVal').html() + '/valid?validationTest=1', localStorage.getItem('CMPHASH')),
         type: 'GET',
         success: function(data){
-          //window.location = uri;
-          $.mobile.changePage(uri);
+          $('error').html('No errors!');
+          window.location = completeUrl('/' + $('.userIdVal').text() + 
+            [$('.promotionIdVal').text() == '' ? '/history' : '/promotion/' + 
+            $('.promotionIdVal').text()], localStorage.getItem('CMPHASH'));
+          //$('.error').html(linka)
         },
         error: function(data){
           $('.error').html('An error occurred. Please log-in again.');
-          localStorage.setItem('CMPHASH', null);
-          localStorage.removeItem('CMPHASH');
+          //localStorage.setItem('CMPHASH', null);
+          //localStorage.removeItem('CMPHASH');
         } 
       });
     }
-    //else
-    //  $('.error').html('Please log in.');
     $(function(){
       $('.button').click(function(){
         $('.error').html('');
@@ -45,20 +41,12 @@ block content
             type: 'POST',
             data: {userId: $('.userId').val(), password: $('.password').val()},
             success: function(data){
-              //$('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
-              var uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
+              uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
               uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
-              //$('#test2').html(uri + ' ' + localStorage.getItem('CMPHASH'));
-              //window.location = uri;
-              $.mobile.changePage(uri);
-              /*$.ajax({
-                url: uri,
-                type: 'GET',
-                success: function(data){
-                  //window.location = uri;
-                }
-              });*/
+              //$('.error').html(uri);
+              window.location = uri;
+              //$.mobile.changePage(uri);
               return false;
             },
             error: function(data){
