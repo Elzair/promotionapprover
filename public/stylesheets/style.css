@@ -43,3 +43,6 @@ a {
   font: 16px "Lucida Grande", Helvetica, Arial, san-serif;
   color: #f00;
 }
+img {
+  max-width: 100%;
+}

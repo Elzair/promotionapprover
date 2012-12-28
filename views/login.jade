@@ -24,8 +24,8 @@ block content
         url: completeUrl('/' + $('.userIdVal').html() + '/valid', localStorage.getItem('CMPHASH')),
         type: 'GET',
         success: function(data){
-          window.location = uri;
-          //$.mobile.changePage(uri);
+          //window.location = uri;
+          $.mobile.changePage(uri);
         },
         error: function(data){
           $('.error').html('An error occurred. Please log-in again.');
@@ -50,8 +50,8 @@ block content
               var uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
               uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
               //$('#test2').html(uri + ' ' + localStorage.getItem('CMPHASH'));
-              window.location = uri;
-              //$.mobile.changePage(uri);
+              //window.location = uri;
+              $.mobile.changePage(uri);
               /*$.ajax({
                 url: uri,
                 type: 'GET',

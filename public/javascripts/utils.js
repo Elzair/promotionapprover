@@ -22,6 +22,7 @@ function completeUrl(url, key){
 	uri.setQuery(sortProperties(uri.getQueryParams()));
   //var hash = hex_hmac_sha512(key, uri.toString());
   var hash = new Hashes.SHA512().hex_hmac(uri.toString(), key);
+  uri = uri.addQueryParam('hash', hash);
   $('.error').html(hash);
-  return uri.addQueryParam('hash', hash).toString();
+  return uri.toString();
 }

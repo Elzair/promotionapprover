@@ -113,8 +113,8 @@ exports.decision = function(req, res){
     }
   };
   var postReq = http.request(options, function(resp){
-    console.log('STATUS: ' + resp.statusCode);
-    console.log('HEADERS: ' + JSON.stringify(resp.headers));
+    //console.log('STATUS: ' + resp.statusCode);
+    //console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
 	  var arr = '';
     resp.on('data', function(chunk){
@@ -125,7 +125,7 @@ exports.decision = function(req, res){
 	    //console.log('BODY: ' + JSON.stringify(data));
 	    //res.redirect('/' + userId + '/history');
       res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
-        enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail});
+        enablePromotion: true, enableHistory: true, enableLogout: true, active: 1, decision: decision});
     });
     resp.on('error', function(e){
 	    res.render('error', {title: 'Approve/Reject Error', data: JSON.stringify(e)});

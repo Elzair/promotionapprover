@@ -3,14 +3,17 @@ extends layout
 block content
   div(data-role='header', data-position='fixed', data-theme='b', data-id='myHeader')
     h1= title
+  div	
+    p(class='userId', hidden) #{userId}
+    script(type='text/javascript')
+      setTimeout(function(){
+        window.location = completeUrl('/' + $('.userId').html() + '/login', localStorage.getItem('CMPHASH'));
+      }, 5000);
   div(class='centered')
-    if decision == 'Approve Promotion'
+    if decision == 'Approve'
       h2 Promotion Approved!
     else
-      h2 Promotion Rejected
-      p Would you like to contact the creator to tell them of your reason?
-      - var emailUrl = 'mailto:' + creatorEmail
-      a(href=emailUrl) #{creatorEmail}
+      h2 Promotion Rejected!
     - var historyUrl = '/' + userId + '/history'
-    a(href=historyUrl, class='validate') Go back to history
+    a(href=historyUrl, class='validate') Click here to go back to History or be automatically redirected in five seconds.
   include footer
