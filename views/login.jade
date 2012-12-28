@@ -12,24 +12,25 @@ block content
     $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
     if (typeof(Storage) !== 'undefined')
       $('.error').html('');
-  script(type='text/javascript')
     if (typeof(Storage) !== 'undefined' && $('.userIdVal').text() != '' && localStorage.hasOwnProperty('CMPHASH') && localStorage.getItem('CMPHASH') != null) {
-      var uri = ''
+      var uri = '';
       if ($('.promotionIdVal').html() != '')
         uri = '/' + $('.userIdVal').html() + '/promotion/' + $('.promotionIdVal').html();
       else
         uri = '/' + $('.userIdVal').html() + '/history';
-      var ut = new MyUtils();
-      uri = ut.completeUrl(uri, localStorage.getItem('CMPHASH'));
+      uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
       //$('#test').html(uri);
       $.ajax({
-        url: ut.completeUrl('/' + $('.userIdVal').html() + '/valid', localStorage.getItem('CMPHASH')),
+        url: completeUrl('/' + $('.userIdVal').html() + '/valid', localStorage.getItem('CMPHASH')),
         type: 'GET',
         success: function(data){
           window.location = uri;
+          //$.mobile.changePage(uri);
         },
         error: function(data){
-          //$('.error').html('An error occurred. Please log-in again.');
+          $('.error').html('An error occurred. Please log-in again.');
+          localStorage.setItem('CMPHASH', null);
+          localStorage.removeItem('CMPHASH');
         } 
       });
     }
@@ -46,11 +47,11 @@ block content
             success: function(data){
               //$('#test').html('Success!' + JSON.stringify(data));
               localStorage.setItem('CMPHASH', data['Hash']);
-              var ut = new MyUtils();
               var uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
-              uri = ut.completeUrl(uri, localStorage.getItem('CMPHASH'));
+              uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
               //$('#test2').html(uri + ' ' + localStorage.getItem('CMPHASH'));
-              //window.location = uri;
+              window.location = uri;
+              //$.mobile.changePage(uri);
               /*$.ajax({
                 url: uri,
                 type: 'GET',

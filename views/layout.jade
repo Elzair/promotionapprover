@@ -9,21 +9,27 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(type='text/javascript', src='/javascripts/jquery-1.8.2.min.js')
     script(type='text/javascript', src='http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js')
-    script(type='text/javascript', src='/javascripts/sha512.js')
+    script(type='text/javascript', src='/javascripts/hashes.min.js')
     script(type='text/javascript', src='/javascripts/jsuri-1.1.1.js')
     script(type='text/javascript', src='/javascripts/utils.js')
     script(type='text/javascript')
       $(function(){
-        $('.validate').click(function(){
-          var uta = new MyUtils();
-          var url = new Uri(this.href).setProtocol('').setHost('').setPort('').toString();
-          var link = uta.completeUrl(url, localStorage.getItem('CMPHASH'));
-          //$('.error').html(link);
-          //window.location = link;
+        /*$('.validate').click(function(){
+          url = new Uri(this.href).setProtocol('').setHost('').setPort('').toString();
+          link = completeUrl(url, localStorage.getItem('CMPHASH'));
+          $('.error').html(link);
+          window.location = link;
+          //$.mobile.changePage(link);
           $('.error').html(localStorage.getItem('CMPHASH'));
           return false; 
-        });
+        });*/
       });
   body	
     div(data-role='page')
+      script(type='text/javascript')
+        $(document).bind('pagechange', function(e, data){
+          $('a.validate').each(function(){
+            this.href = completeUrl(new Uri(this.href).setProtocol(null).setHost(null).setPort(null).toString(), localStorage.getItem('CMPHASH'));
+          });
+        }); 
       block content

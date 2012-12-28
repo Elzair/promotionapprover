@@ -31,13 +31,23 @@ app.configure(function(){
   app.use(app.router);
   app.use(require('stylus').middleware(__dirname + '/public'));
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(function(req, res, next){
+	  res.status(404);
+	  if (req.accepts('html'))
+	    res.render('error', {title: 'Error', data: 'Invalid Request!'});
+	  else if (req.accepts('json'))
+      res.send({error: 'Invalid Request!'});
+    else
+      res.type('txt').send('Invalid Request!');
+  });
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler());
+  //app.use(express.errorHandler());
+  app.use(express.static(path.join(__dirname, 'ipd')));
 });
 
-//app.get('/', user.login);
+app.get('/login', user.login);
 app.get('/:userId/login', user.loginPrompt);
 app.post('/:userId/login', user.login);
 app.all('/:userId/logout', user.logout);

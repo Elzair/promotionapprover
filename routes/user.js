@@ -1,6 +1,6 @@
 var http = require('http')
-  , crypto = require('crypto')
-  , hmac = require('../utils/hmac')
+  , Hashes = require('jshashes')
+  //, hmac = require('../utils/hmac')
   , misc = require('../utils/misc');
 /*
  * GET users listing.
@@ -93,7 +93,8 @@ exports.validate = function(req, res, next){
           div = '&';
         }
         console.log(url + ' ' + arr);
-        var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
+        //var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
+        var computedHash = new Hashes.SHA512().hex_hmac(url, JSON.parse(arr));
         console.log(returnedHash + ' ' + computedHash);
         if (returnedHash == computedHash)
           next();
@@ -108,10 +109,7 @@ exports.validate = function(req, res, next){
 }
 
 exports.valid = function(req, res){
+	console.log('User is authenticated.');
 	var data = JSON.stringify({Status: 'Success'});
-	res.writeHead(200, {
-    'Content-Type': 'application/json',
-    'Content-Length': data.length
-  });
-  res.end(data);
+	res.status(200);
 }
