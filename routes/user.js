@@ -80,10 +80,10 @@ exports.validate = function(req, res, next){
     http.request(options, function(resp){
       resp.setEncoding('utf8');
       var arr = '';
-      resp.on('data', function (chunk){
+      resp.on('data', function(chunk){
         arr += chunk;
       });
-      resp.on('end', function (){
+      resp.on('end', function(){
         var returnedHash = req.query['hash'];
         var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); // remove their signature from url & sort query parameters
         var url = req.path;
@@ -103,6 +103,9 @@ exports.validate = function(req, res, next){
           res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
 			      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
         }
+	    });
+	    resp.on('error', function(){
+		    res.status(500).render('error', {title: 'Error', data: 'Invalid login credentials!'});
 	    });
     }).end();
   }

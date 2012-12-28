@@ -1,8 +1,12 @@
 exports.getProperty = function(obj, p){
+	if (obj == null || p == null)
+	  return null;
   return obj.hasOwnProperty(p) ? obj[p] : '';
 }
 
 exports.sortProperties = function(obj){
+	if (obj == null)
+	  return obj;
   var keys = [], nd = new Object();
   for (var key in obj)
     if (obj.hasOwnProperty(key))
@@ -16,13 +20,18 @@ exports.sortProperties = function(obj){
 }
 
 exports.deleteProperty = function(obj, p){
-  delete obj[p];
+	if (obj == null)
+	  return obj;
+  if (obj.hasOwnProperty(p))
+    delete obj[p];
   //obj.length -= 1;
   console.log('Deleted: ' + JSON.stringify(obj));
   return obj;
 }
 
 exports.replaceQuotes = function(str){
+	if (str == null || str == '')
+	  return str;
   var newparams = [];
   var params = str.split(',');
   for (var param in params){
