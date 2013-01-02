@@ -2,6 +2,10 @@ var http = require('http')
   , misc = require('../utils/misc');
 
 /*
+ * This file deals with displaying, approving  rejecting promotions.
+ */
+
+/*
  * Display Current & Past Promotions
  */
 exports.history = function(req, res){
@@ -39,8 +43,10 @@ exports.history = function(req, res){
         else
           rejected.push(data[promo]);
 	    }
-	    res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
-        enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2, pending: pending, approved: approved, rejected: rejected});
+	    res.render('promotionlist', {title: 'History', data: data, userId: userId, 
+	      promotionId: promotionId,enablePromotion: enablePromotion, 
+	      enableHistory: true, enableLogout: true, active: 2, pending: pending, 
+	      approved: approved, rejected: rejected});
 	  });
   }).end();
 }
@@ -69,17 +75,20 @@ exports.promotion = function(req, res){
 	    var data = JSON.parse(arr);
 	    // Handle case when webservice returns no data
 	    if (resp.statusCode != 200)
-	      res.status(404).render('error', {title: 'Promotion Error', data: 'Cannot find this promotion!'});
+	      res.status(404).render('error', {title: 'Promotion Error', 
+	        data: 'Cannot find this promotion!'});
 	    else{
 		    // Enable approving & rejecting promotion if user is authorized
 	      var enableApprover = false;
         for (approver in data['Approvers']){
           if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
-             (data['Approvers'][approver]['ApprovalStatus'] == 1 || data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
+             (data['Approvers'][approver]['ApprovalStatus'] == 1 || 
+              data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
             enableApprover = true;
         }
-	      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
-	        enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
+	      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
+	        promotionId: promotionId, enablePromotion: true, enableHistory: true, 
+	        enableLogout: true, enableApprover: enableApprover, active: 1});
 	    }
 	  });
   }).end();
@@ -98,11 +107,13 @@ exports.decision = function(req, res){
   var postData = '';
   // Determine if the user is approving or rejecting a promotion
   if (decision == 'Approve') {	
-    path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId + '&userId=' + userId;
+    path = '/api/Promotion/ApprovePromotion?promotionId=' + 
+      promotionId + '&userId=' + userId;
     postData = JSON.stringify({promotionId: promotionId, userId: userId});
   }
   else if (decision == 'Reject') {
-    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&userId=' + userId + '&reason=' + encodeURIComponent(reason);
+    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + 
+      '&userId=' + userId + '&reason=' + encodeURIComponent(reason);
     postData = JSON.stringify({id: promotionId, userId: userId, reason: reason});
   }
   // Post data to remote webservice to approve or reject the promotion
@@ -124,8 +135,9 @@ exports.decision = function(req, res){
     });
 	  resp.on('end', function(){
 	    var data = '';
-      res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
-        enablePromotion: true, enableHistory: true, enableLogout: true, active: 1, decision: decision});
+      res.render('decision', {title: decision + ' Promotion', data: data, 
+        userId: userId, promotionId: promotionId, enablePromotion: true, 
+        enableHistory: true, enableLogout: true, active: 1, decision: decision});
     });
     resp.on('error', function(e){
 	    res.render('error', {title: 'Approve/Reject Error', data: JSON.stringify(e)});

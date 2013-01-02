@@ -3,7 +3,7 @@ var http = require('http')
   //, hmac = require('../utils/hmac')
   , misc = require('../utils/misc');
 /*
- * This file mostly deals with user authentication
+ * This file mostly deals with user authentication.
  */
 
 /*
@@ -11,12 +11,14 @@ var http = require('http')
  */
 exports.loginPrompt = function(req, res){
 	console.log('Showing Login prompt!');
-  res.render('login', {title: 'Login', data: '', userId: req.params.userId, promotionId: misc.getProperty(req.query, 'promotionId'),
-    enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
+  res.render('login', {title: 'Login', data: '', userId: req.params.userId, 
+    promotionId: misc.getProperty(req.query, 'promotionId'),
+    enablePromotion: false, enableHistory: false, enableLogout: false, 
+    active: 0});
 }
 
 /*
- * Authenticate User: store their credentials on a remote server & return 
+ * Store user's credentials on a remote server & return 
  * their hashed password to use as an authentication token
  */
 exports.login = function(req, res){
@@ -29,7 +31,8 @@ exports.login = function(req, res){
     var options = {
 	    host: 'compdev2',
 	    port: 8087,
-	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
+	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + 
+	      '&password=' + req.body.password,
 	    method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -58,8 +61,10 @@ exports.login = function(req, res){
     postReq.end();
   }
   else
-    res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), promotionId: misc.getProperty(req.body, 'promotionId'),
-      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
+    res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), 
+      promotionId: misc.getProperty(req.body, 'promotionId'),
+      enablePromotion: false, enableHistory: false, enableLogout: false, 
+      active: 0});
 }
 
 /*
@@ -67,19 +72,24 @@ exports.login = function(req, res){
  */
 exports.logout = function(req, res){
 	console.log('Now logging out!');
-  res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: '',
-    enablePromotion: false, enableHistory: false, enableLogout: true, active: 3});
+  res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), 
+    promotionId: '', enablePromotion: false, enableHistory: false, enableLogout: true, 
+    active: 3});
 }
 
 /*
- * Ensure user is authorized to access the system by comparing their HMAC-SHA-256 hash of the requested URL 
- * to the one generated from their password hash to the one generated 
+ * Ensure user is authorized to access the system by comparing their HMAC-SHA-256 
+ * hash of the requested URL to the one generated from their password hash 
+ * to the one generated 
  */
 exports.validate = function(req, res, next){
   console.log('Beginning validation of this url: ' + req.originalUrl);
-  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || !req.params.hasOwnProperty('userId')){
+  if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || 
+      !req.params.hasOwnProperty('userId')){
     console.log('Getting login info!');
-    res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
+    res.status(500).render('login', {title: 'Login', data: '', 
+      userId: misc.getProperty(req.params, 'userId'), 
+      promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0}); 
   }
   else {
@@ -97,7 +107,8 @@ exports.validate = function(req, res, next){
       });
       resp.on('end', function(){
         var returnedHash = req.query['hash'];
-        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); // remove their signature from url & sort query parameters
+        // remove their signature from url & sort query parameters
+        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); 
         var url = req.path;
         var div = '?'
         for (q in queries){
@@ -111,11 +122,11 @@ exports.validate = function(req, res, next){
           next();
         else{
           console.log('Incorrect info! Retrieving new login information!');
-          //if (misc.getProperty(req.query, 'validationTest') != '1')
-            res.status(500).render('login', {title: 'Login', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: misc.getProperty(req.params, 'promotionId'), 
-			        enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
-			    //else
-			     // res.status(500).end();
+            res.status(500).render('login', {title: 'Login', data: '', 
+              userId: misc.getProperty(req.params, 'userId'), 
+              promotionId: misc.getProperty(req.params, 'promotionId'), 
+			        enablePromotion: false, enableHistory: false, 
+			        enableLogout: false, active: 0});
         }
 	    });
 	    resp.on('error', function(){

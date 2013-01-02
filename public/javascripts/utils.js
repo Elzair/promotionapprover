@@ -19,7 +19,8 @@ function completeUrl(url, key){
 	if (url == null || url == '' || key == null || key == '')
 	  return '';
 	uri = new Uri(url).setProtocol('').setHost('').setPort('')
-	  .deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', new Date().getTime().toString());
+	  .deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', 
+	    new Date().getTime().toString());
 	uri.setQuery(sortProperties(uri.getQueryParams()));
   hash = new Hashes.SHA256().hex_hmac(uri.toString(), key);
   uri = uri.addQueryParam('hash', hash);
