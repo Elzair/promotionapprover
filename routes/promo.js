@@ -1,9 +1,9 @@
 var http = require('http')
   , misc = require('../utils/misc');
-/*
- * GET home page.
- */
 
+/*
+ * Display Current & Past Promotions
+ */
 exports.history = function(req, res){
 	console.log('Retrieving history for user: ' + req.params.userId);
   var userId = req.params.userId;
@@ -11,10 +11,10 @@ exports.history = function(req, res){
   var enablePromotion = false;
   if (promotionId != '')
     enablePromotion = true;
+  // Call webservice to get list of promotions
   var options = {
 	  host: 'compdev2',
 	  port: 8087,
-	  //path: '/PromotionWcfR/GetPromotions?userId=' + userId,
 	  path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
 	  method: 'GET'
   };
@@ -26,7 +26,7 @@ exports.history = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-      //console.log(JSON.stringify(data));
+	    // Sort returned data into three groups: Pending, Approved & Rejected
 	    var pending = [], approved = [], rejected = [];
 	    for (promo in data){
 	      for (param in data[promo]){
@@ -45,14 +45,17 @@ exports.history = function(req, res){
   }).end();
 }
 
+/*
+ * Display detailed promotion information
+ */
 exports.promotion = function(req, res){
   console.log('Retrieving info on promotion ' + req.params.promotionId);
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
+  // Call webservice to retrieve detailed promotion information
   var options = {
 	  host: 'compdev2',
 	  port: 8087,
-    //path: '/PromotionWcfR/GetPromotionById?promotionId=' + promotionId,
 	  path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
 	  method: 'GET'
   };
@@ -64,10 +67,11 @@ exports.promotion = function(req, res){
     });
 	  resp.on('end', function (){
 	    var data = JSON.parse(arr);
-      console.log(JSON.stringify(data));
+	    // Handle case when webservice returns no data
 	    if (resp.statusCode != 200)
 	      res.status(404).render('error', {title: 'Promotion Error', data: 'Cannot find this promotion!'});
 	    else{
+		    // Enable approving & rejecting promotion if user is authorized
 	      var enableApprover = false;
         for (approver in data['Approvers']){
           if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
@@ -81,27 +85,27 @@ exports.promotion = function(req, res){
   }).end();
 }
 
+/*
+ * Handles approving & rejecting promotions
+ */
 exports.decision = function(req, res){
   console.log(JSON.stringify(req.params) + JSON.stringify(req.body));
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
-  var decision = req.body.decision;
-  var creatorEmail = req.body.creatorEmail;
-  var reason = '';
+  var decision = misc.getProperty(req.body, 'decision');
+  var reason = misc.getProperty(req.body, 'reason');
   var path = '';
   var postData = '';
-  if (req.body.hasOwnProperty('reason'))
-    reason = req.body.reason;
+  // Determine if the user is approving or rejecting a promotion
   if (decision == 'Approve') {	
-    //path = '/PromotionWcfR/ApprovePromotion?id=' + promotionId;
     path = '/api/Promotion/ApprovePromotion?promotionId=' + promotionId + '&userId=' + userId;
     postData = JSON.stringify({promotionId: promotionId, userId: userId});
   }
   else if (decision == 'Reject') {
-    //path = '/PromotionWcfR/RejectPromotion?id=' + promotionId + '&reason=' + encodeURIComponent(reason);
     path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + '&userId=' + userId + '&reason=' + encodeURIComponent(reason);
     postData = JSON.stringify({id: promotionId, userId: userId, reason: reason});
   }
+  // Post data to remote webservice to approve or reject the promotion
   var options = {
 	  host: 'compdev2',
 	  port: 8087,
@@ -113,8 +117,6 @@ exports.decision = function(req, res){
     }
   };
   var postReq = http.request(options, function(resp){
-    //console.log('STATUS: ' + resp.statusCode);
-    //console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
 	  var arr = '';
     resp.on('data', function(chunk){
@@ -122,8 +124,6 @@ exports.decision = function(req, res){
     });
 	  resp.on('end', function(){
 	    var data = '';
-	    //console.log('BODY: ' + JSON.stringify(data));
-	    //res.redirect('/' + userId + '/history');
       res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
         enablePromotion: true, enableHistory: true, enableLogout: true, active: 1, decision: decision});
     });
@@ -135,7 +135,11 @@ exports.decision = function(req, res){
   postReq.end();
 }
 
+/*
+ * Retrieve media file linked to a promotion
+ */
 exports.media = function(req, res){
+  // Call remote webservice to retrieve Base-64 encoded string containing the file 
   var options = {
 	host: 'compdev2',
 	port: 8087,
@@ -153,13 +157,14 @@ exports.media = function(req, res){
 	  });
     resp.on('end', function (){
       var data = JSON.parse(arr);
-	    var binFile;
+	    var binFile; // Use a Buffer object to handle binary data
       var len;
 	    var fname;
-      var minify = false;
-      if (req.query.hasOwnProperty('minify'))
-        minify = req.query.minify;
-	    if (minify == true && data['FileType'] == 1 && data['FileName'] != data['ImagePopupImageFileName']) {
+      var minify = misc.getProperty(req.query, 'minify');
+      // If the file is an image to be displayed in-browser, 
+      // display the pop-up image instead of the full image
+	    if (minify == true && data['FileType'] == 1 && 
+	        data['FileName'] != data['ImagePopupImageFileName']) {
 		    binFile = new Buffer(data['PopupContent'], 'base64');
 		    len = binFile.length;
 		    fname = data['ImagePopupImageFileName'];
@@ -169,6 +174,7 @@ exports.media = function(req, res){
         len = binFile.length;
 		    fname = data['FileName'];
 	    }
+	    // Return file 
 	    res.writeHead(200, {
 		    'Content-Type': data['MimeType'],
 		    'Content-Length': len,

@@ -5,8 +5,6 @@ block content
     h1= title
   p(id='userIdVal', class='userIdVal', hidden) #{userId}
   p(id='promotionIdVal', class='promotionIdVal', hidden) #{promotionId}
-  p(id='test')
-  p(id='test2')
   p(class='error') This website requires Javascript & Web Storage to work. Please enable them or use a browser that supports them.
   script(type='text/javascript')
     $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
@@ -19,16 +17,14 @@ block content
         url: completeUrl('/' + $('.userIdVal').html() + '/valid?validationTest=1', localStorage.getItem('CMPHASH')),
         type: 'GET',
         success: function(data){
-          $('error').html('No errors!');
           window.location = completeUrl('/' + $('.userIdVal').text() + 
             [$('.promotionIdVal').text() == '' ? '/history' : '/promotion/' + 
             $('.promotionIdVal').text()], localStorage.getItem('CMPHASH'));
-          //$('.error').html(linka)
         },
         error: function(data){
           $('.error').html('An error occurred. Please log-in again.');
-          //localStorage.setItem('CMPHASH', null);
-          //localStorage.removeItem('CMPHASH');
+          localStorage.setItem('CMPHASH', null);
+          localStorage.removeItem('CMPHASH');
         } 
       });
     }
@@ -44,9 +40,7 @@ block content
               localStorage.setItem('CMPHASH', data['Hash']);
               uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
               uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
-              //$('.error').html(uri);
               window.location = uri;
-              //$.mobile.changePage(uri);
               return false;
             },
             error: function(data){

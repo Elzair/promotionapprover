@@ -5,15 +5,13 @@ block content
     h1= title
   p(class='userId', hidden) #{userId}
   script(type='text/javascript')
-    //document.ready(function(){
-      if (typeof(Storage) !== 'undefined' && localStorage.hasOwnProperty('CMPHASH')){
-        localStorage.setItem('CMPHASH', null);
-        localStorage.removeItem('CMPHASH');
-      }
-      setTimeout(function(){
-        window.location = '/' + $('.userId').html() + '/login';
-      }, 5000);
-    //});
+    if (typeof(Storage) !== 'undefined' && localStorage.hasOwnProperty('CMPHASH')){
+      localStorage.setItem('CMPHASH', null);
+      localStorage.removeItem('CMPHASH');
+    }
+    setTimeout(function(){
+      window.location = '/' + $('.userId').html() + '/login';
+    }, 5000);
   div(class='centered')
     h2 You have successfully logged out.
     - var loginUrl = '/' + userId + '/login'

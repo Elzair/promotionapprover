@@ -3,25 +3,32 @@ var http = require('http')
   //, hmac = require('../utils/hmac')
   , misc = require('../utils/misc');
 /*
- * GET users listing.
+ * This file mostly deals with user authentication
  */
 
+/*
+ * Show login prompt
+ */
 exports.loginPrompt = function(req, res){
 	console.log('Showing Login prompt!');
   res.render('login', {title: 'Login', data: '', userId: req.params.userId, promotionId: misc.getProperty(req.query, 'promotionId'),
     enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
 }
 
+/*
+ * Authenticate User: store their credentials on a remote server & return 
+ * their hashed password to use as an authentication token
+ */
 exports.login = function(req, res){
   console.log('Logging in with info: ' + JSON.stringify(req.body));
   var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
 	  postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
 	  console.log(postData);
+	  // Call AuthenticateUser webservice
     var options = {
 	    host: 'compdev2',
 	    port: 8087,
-	    //path: '/PromotionWcfR/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
 	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + '&password=' + req.body.password,
 	    method: 'POST',
       header: {
@@ -36,9 +43,8 @@ exports.login = function(req, res){
         arr += chunk;
       });
 	    resp.on('end', function (){
-		    console.log(misc.replaceQuotes(arr));
 	      var data = JSON.parse(arr);
-	      console.log('data: ' + JSON.stringify(data));
+	      // Handle error
         var returnCode = 200;
         if (data['Hash'] == 'ERROR')
           returnCode = 500;
@@ -56,12 +62,19 @@ exports.login = function(req, res){
       enablePromotion: false, enableHistory: false, enableLogout: false, active: 0});
 }
 
+/*
+ * Log user out of system (basically delete their authentication token)
+ */
 exports.logout = function(req, res){
 	console.log('Now logging out!');
   res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), promotionId: '',
     enablePromotion: false, enableHistory: false, enableLogout: true, active: 3});
 }
 
+/*
+ * Ensure user is authorized to access the system by comparing their HMAC-SHA-256 hash of the requested URL 
+ * to the one generated from their password hash to the one generated 
+ */
 exports.validate = function(req, res, next){
   console.log('Beginning validation of this url: ' + req.originalUrl);
   if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || !req.params.hasOwnProperty('userId')){
@@ -73,7 +86,6 @@ exports.validate = function(req, res, next){
     var options = {
       host: 'compdev2',
       port: 8087,
-      //path: '/PromotionWcfR/GetHash?userId=' + req.params.userId,
       path: '/api/Utility/GetHash?userId=' + req.params.userId,
       method: 'GET'
     };
@@ -93,7 +105,6 @@ exports.validate = function(req, res, next){
           div = '&';
         }
         console.log(url + ' ' + arr);
-        //var computedHash = hmac.hex_hmac_sha512(JSON.parse(arr), url);
         var computedHash = new Hashes.SHA256().hex_hmac(url, JSON.parse(arr));
         console.log(returnedHash + ' ' + computedHash);
         if (returnedHash == computedHash)
@@ -114,6 +125,9 @@ exports.validate = function(req, res, next){
   }
 }
 
+/*
+ * Test path to check if a user can access the system
+ */
 exports.valid = function(req, res){
 	console.log('User is authenticated.');
 	var data = JSON.stringify({Status: 'Success'});

@@ -13,7 +13,7 @@ var express = require('express')
 
 var app = express();
 
-var options = {
+var https_options = {
     key: fs.readFileSync('ssl/privatekey.pem')
   , cert: fs.readFileSync('ssl/certificate.pem')
 };
@@ -57,6 +57,6 @@ app.post('/:userId/promotion/:promotionId/decision', user.validate, promo.decisi
 app.get('/:userId/valid', user.validate, user.valid);
 app.get('/media/:fileId', promo.media);
 
-http.createServer(app).listen(app.get('port'), function(){
+https.createServer(https_options, app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
