@@ -8,12 +8,12 @@ block content
     script(type='text/javascript')
       setTimeout(function(){
         window.location = completeUrl('/' + $('.userId').html() + '/login', localStorage.getItem('CMPHASH'));
-      }, 5000);
+      }, 3000);
   div(class='centered')
     if decision == 'Approve'
       h2 Promotion Approved!
     else
       h2 Promotion Rejected!
     - var historyUrl = '/' + userId + '/history'
-    a(href=historyUrl, class='validate') Click here to go back to History or be automatically redirected in five seconds.
+    p You will be redirected to the History screen in 3 seconds.
   include footer

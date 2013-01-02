@@ -17,37 +17,54 @@ block content
         $('.reason').hide();
       });
       $(function(){
-        $('.decision').bind('submit', function(e){
-          $('.decision').attr('action', completeUrl($('.decision').attr('action'), localStorage.getItem('CMPHASH')));
-          $('.error').html(JSON.stringify($('.decison').serialize()));
-          if ($('input[name="decision"]').value() == ''){
+        $('.button').click(function(){
+          //$('.decision').attr('action', completeUrl($('.decision').attr('action'), localStorage.getItem('CMPHASH')));
+          if (!$('input:radio[name=decision]:checked').val()){
             $('.error').html('You must approve or reject the promotion!');
-            e.preventDefault();
             return false;
           }
-          else if ($('input[name="decision"]').value() == 'Reject' && $('.reason').text() == ''){
-            e.preventDefault();
+          else if ($('input:radio[name=decision]:checked').val() == 'Reject' && !$('.reason').val()){
             $('.error').html('You must specifiy a reason for rejecting the promotion!');
             return false;
           }
           else{
-            e.preventDefault();
-            return false;
+            $('.error').html('No errors!');
+            /*$.ajax({
+               url: $('.decision').attr('action'),
+               type: 'POST',
+               data: {decision: $('input:radio[name=decision]:checked').val(), reason: $('.reason').val()},
+               success: function(data){
+                 window.location = url;
+                 return true;
+               },
+               error: function(data){
+                 $('.error').html('Something went wrong: ' + JSON.stringify(data));
+                 return false;
+               }
+            });*/
+            $('.decision').submit();
+            return true;
           }
         });
       });
+      $(function(){
+        $('.decision').submit(function(data){
+          $('.decision').attr('action', completeUrl($('.decision').attr('action'), localStorage.getItem('CMPHASH')));
+          return true;
+        })
+      })
     if enableApprover
       - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
       form(method='post', action=postUrl, data-ajax='false', id='decisionForm', class='decision')
         div(data-role='fieldcontain')
-          fieldset(data-role='controlgroup', data-type='horizontal')
+          fieldset(data-role='controlgroup', data-type='horizontal', class='decisions')
             legend Decide:
             input(type='radio', name='decision', id='approves', value='Approve', onClick='approve()')
             label(for='approves') Approve
             input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
             label(for='rejects') Reject
           input(type='text', name='reason', id='reason', class='reason', placeholder='Reason')
-        input(type='submit', id='submitButton', class='button', value='Submit')
+        input(type='button', id='submitButton', class='button', value='Submit')
   div#DescId
     h2 Description
     p #{data['Description']}
