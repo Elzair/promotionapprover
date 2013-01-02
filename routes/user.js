@@ -130,7 +130,8 @@ exports.validate = function(req, res, next){
         }
 	    });
 	    resp.on('error', function(){
-		    res.status(500).render('error', {title: 'Error', data: 'Invalid login credentials!'});
+		    res.status(500).render('error', {title: 'Error', 
+		      data: 'Invalid login credentials!'});
 	    });
     }).end();
   }

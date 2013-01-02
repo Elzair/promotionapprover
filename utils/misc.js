@@ -15,7 +15,6 @@ exports.sortProperties = function(obj){
   for (var k in keys)
     if (obj.hasOwnProperty(keys[k]))
       nd[keys[k]] = obj[keys[k]];
-  console.log('Sorted: ' + JSON.stringify(nd));
   return nd;
 }
 
@@ -24,8 +23,6 @@ exports.deleteProperty = function(obj, p){
 	  return obj;
   if (obj.hasOwnProperty(p))
     delete obj[p];
-  //obj.length -= 1;
-  console.log('Deleted: ' + JSON.stringify(obj));
   return obj;
 }
 
