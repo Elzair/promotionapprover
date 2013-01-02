@@ -17,7 +17,7 @@ html
       script(type='text/javascript')
         $(function(){
           $('a.validate').click(function(){
-            this.href = completeUrl(new Uri(this.href).setProtocol('').setHost('').setPort('').toString(), localStorage.getItem('CMPHASH'));
+            this.href = completeUrl(this.href, localStorage.getItem('CMPHASH'));
             return true;
           });
         });

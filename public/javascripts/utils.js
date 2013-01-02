@@ -18,10 +18,9 @@ function getProperty(obj, p){
 function completeUrl(url, key){
 	if (url == null || url == '' || key == null || key == '')
 	  return '';
-	uri = new Uri(url).deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', new Date().getTime().toString());
+	uri = new Uri(url).setProtocol('').setHost('').setPort('')
+	  .deleteQueryParam('timeStamp', 'hash').addQueryParam('timeStamp', new Date().getTime().toString());
 	uri.setQuery(sortProperties(uri.getQueryParams()));
-  //var hash = hex_hmac_sha512(key, uri.toString());
-  //$('.error').html(uri.toString());
   hash = new Hashes.SHA256().hex_hmac(uri.toString(), key);
   uri = uri.addQueryParam('hash', hash);
   return uri.toString();
