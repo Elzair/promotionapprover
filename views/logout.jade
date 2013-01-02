@@ -11,9 +11,8 @@ block content
     }
     setTimeout(function(){
       window.location = '/' + $('.userId').html() + '/login';
-    }, 5000);
+    }, 3000);
   div(class='centered')
     h2 You have successfully logged out.
     - var loginUrl = '/' + userId + '/login'
-    a(href=loginUrl) Click here or be automatically redirected in five seconds.
   include footer

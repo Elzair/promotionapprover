@@ -70,7 +70,7 @@ block content
   div(class='login')
     - var postUrl = '/';
     form(method='post', action=postUrl, class='loginForm')
-      input(type='text', name='userId', id='userId', class='userId', autocorrect='off', autocapitalize='off', placeholder='Username')
+      input(type='text', name='userId', id='userId', class='userId asis', autocorrect='off', autocapitalize='off', placeholder='Username')
       input(type='password', name='password', id='password', class='password lastInput', placeholder='Password')
       input(type='hidden', id='promotionId', class='promotionId', val=promotionId)
       input(type='button', id='submitButton', class='button', value='Submit')
