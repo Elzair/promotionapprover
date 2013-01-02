@@ -38,9 +38,9 @@ block content
             data: {userId: $('.userId').val(), password: $('.password').val()},
             success: function(data){
               localStorage.setItem('CMPHASH', data['Hash']);
-              uri = '/' + $('.userId').val() + [$('.promotionId').val() == '' ? '/history' : '/promotion/' + $('.promotionId').val()];
-              uri = completeUrl(uri, localStorage.getItem('CMPHASH'));
-              window.location = uri;
+              window.location = completeUrl('/' + $('.userId').val() + 
+              [$('.promotionIdVal').text() == '' ? '/history' : '/promotion/' + 
+              $('.promotionIdVal').text()], localStorage.getItem('CMPHASH'));
               return false;
             },
             error: function(data){
@@ -72,6 +72,5 @@ block content
     form(method='post', action=postUrl, class='loginForm')
       input(type='text', name='userId', id='userId', class='userId asis', autocorrect='off', autocapitalize='off', placeholder='Username')
       input(type='password', name='password', id='password', class='password lastInput', placeholder='Password')
-      input(type='hidden', id='promotionId', class='promotionId', val=promotionId)
       input(type='button', id='submitButton', class='button', value='Submit')
   include footer

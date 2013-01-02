@@ -5,6 +5,52 @@ block content
     h1 #{data['Title']}
   div
     p(class='error')
+  div#InputId
+    script(type='text/javascript')
+      $('#reason').bind('keyup', function() {
+        if (this.value == '')
+          disableSubmit();
+        else
+          enableSubmit();
+      });
+      function disableSubmit() {
+        $('#submitButton').addClass('ui-disabled');
+      }
+      function enableSubmit() { 
+        $('#submitButton').removeClass('ui-disabled');
+      }
+      function reject() { 
+        $('#reason').show();
+        $('#reasonLabel').show();
+        if ($('#reason').val() == '')
+          disableSubmit();
+        else
+          enableSubmit();
+      }
+      function approve() {
+        $('#reason').hide();
+        $('#reasonLabel').hide();
+        enableSubmit();
+      }
+      $(document).ready(function() {
+        $('#reason').hide();
+        $('#reasonLabel').hide();
+      })
+    if enableApprover
+      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
+      - var creatorEmail = data['CreatedByEmail']
+      form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
+        div(data-role='fieldcontain')
+          fieldset(data-role='controlgroup', data-type='horizontal')
+            legend Decide:
+            input(type='radio', name='decision', id='approves', value='Approve', onClick='approve()')
+            label(for='approves') Approve
+            input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
+            label(for='rejects') Reject
+          label(for='reason', id='reasonLabel') Reason:
+          input(type='text', name='reason', id='reason')
+          input(type='hidden', name='creatorEmail', id='creatorEmail', value=creatorEmail)
+        input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
   div#DescId
     h2 Description
     p #{data['Description']}
@@ -114,50 +160,4 @@ block content
   div#CommentId
     h2 Comments
     p #{data['Comments']}
-  div#InputId
-    script(type='text/javascript')
-      $('#reason').bind('keyup', function() {
-        if (this.value == '')
-          disableSubmit();
-        else
-          enableSubmit();
-      });
-      function disableSubmit() {
-        $('#submitButton').addClass('ui-disabled');
-      }
-      function enableSubmit() { 
-        $('#submitButton').removeClass('ui-disabled');
-      }
-      function reject() { 
-        $('#reason').show();
-        $('#reasonLabel').show();
-        if ($('#reason').val() == '')
-          disableSubmit();
-        else
-          enableSubmit();
-      }
-      function approve() {
-        $('#reason').hide();
-        $('#reasonLabel').hide();
-        enableSubmit();
-      }
-      $(document).ready(function() {
-        $('#reason').hide();
-        $('#reasonLabel').hide();
-      })
-    if enableApprover
-      - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
-      - var creatorEmail = data['CreatedByEmail']
-      form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
-        div(data-role='fieldcontain')
-          fieldset(data-role='controlgroup', data-type='horizontal')
-            legend Decide:
-            input(type='radio', name='decision', id='approves', value='Approve', onClick='approve()')
-            label(for='approves') Approve
-            input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
-            label(for='rejects') Reject
-          label(for='reason', id='reasonLabel') Reason:
-          input(type='text', name='reason', id='reason')
-          input(type='hidden', name='creatorEmail', id='creatorEmail', value=creatorEmail)
-        input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
   include footer
