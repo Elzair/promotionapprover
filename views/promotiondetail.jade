@@ -7,39 +7,38 @@ block content
     p(class='error')
   div#InputId
     script(type='text/javascript')
-      $('#reason').bind('keyup', function() {
-        if (this.value == '')
-          disableSubmit();
-        else
-          enableSubmit();
-      });
-      function disableSubmit() {
-        $('#submitButton').addClass('ui-disabled');
-      }
-      function enableSubmit() { 
-        $('#submitButton').removeClass('ui-disabled');
-      }
       function reject() { 
-        $('#reason').show();
-        $('#reasonLabel').show();
-        if ($('#reason').val() == '')
-          disableSubmit();
-        else
-          enableSubmit();
+        $('.reason').show();
       }
       function approve() {
-        $('#reason').hide();
-        $('#reasonLabel').hide();
-        enableSubmit();
+        $('.reason').hide();
       }
       $(document).ready(function() {
-        $('#reason').hide();
-        $('#reasonLabel').hide();
-      })
+        $('.reason').hide();
+      });
+      $(function(){
+        $('.decision').bind('submit', function(e){
+          $('.decision').attr('action', completeUrl($('.decision').attr('action'), localStorage.getItem('CMPHASH')));
+          $('.error').html(JSON.stringify($('.decison').serialize()));
+          if ($('input[name="decision"]').value() == ''){
+            $('.error').html('You must approve or reject the promotion!');
+            e.preventDefault();
+            return false;
+          }
+          else if ($('input[name="decision"]').value() == 'Reject' && $('.reason').text() == ''){
+            e.preventDefault();
+            $('.error').html('You must specifiy a reason for rejecting the promotion!');
+            return false;
+          }
+          else{
+            e.preventDefault();
+            return false;
+          }
+        });
+      });
     if enableApprover
       - var postUrl = '/' + userId + '/promotion/' + promotionId + '/decision'
-      - var creatorEmail = data['CreatedByEmail']
-      form(method='post', action=postUrl, data-ajax='false', id='decisionForm')
+      form(method='post', action=postUrl, data-ajax='false', id='decisionForm', class='decision')
         div(data-role='fieldcontain')
           fieldset(data-role='controlgroup', data-type='horizontal')
             legend Decide:
@@ -47,10 +46,8 @@ block content
             label(for='approves') Approve
             input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
             label(for='rejects') Reject
-          label(for='reason', id='reasonLabel') Reason:
-          input(type='text', name='reason', id='reason')
-          input(type='hidden', name='creatorEmail', id='creatorEmail', value=creatorEmail)
-        input(type='submit', id='submitButton', class='ui-disabled', value='Submit')
+          input(type='text', name='reason', id='reason', class='reason', placeholder='Reason')
+        input(type='submit', id='submitButton', class='button', value='Submit')
   div#DescId
     h2 Description
     p #{data['Description']}
@@ -75,8 +72,9 @@ block content
   div#ImageId
     - var popuppath = '/media/' + data['ImageId'] + '?minify=1'
     - var bigpath = '/media/' + data['ImageId']
-    a(href=bigpath)
-      img(src=popuppath)
+    if data['ImageId']
+      a(href=bigpath)
+        img(src=popuppath)
   div#PrintId
     h2 Print
     ul

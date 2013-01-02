@@ -113,8 +113,8 @@ exports.decision = function(req, res){
   }
   else if (decision == 'Reject') {
     path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + 
-      '&userId=' + userId + '&reason=' + encodeURIComponent(reason);
-    postData = JSON.stringify({id: promotionId, userId: userId, reason: reason});
+      '&userId=' + userId + '&reasonText=' + encodeURIComponent(reason);
+    postData = JSON.stringify({id: promotionId, userId: userId, reasonText: reason});
   }
   // Post data to remote webservice to approve or reject the promotion
   var options = {
