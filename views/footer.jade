@@ -3,15 +3,19 @@ block footer
   - var historyUrl = '/' + userId + '/history' + (enablePromotion ? '?lastPromotionId='+promotionId : '')
   - var logoutUrl = '/' + userId + '/logout'
   - var promotionClass = 'validate ' + (enablePromotion ? '' : 'ui-disabled ') + (active == 1 ? 'ui-btn-active' : 'ui-btn')
-  - var historyClass = 'validate ' + (enableHistory ? '' : 'ui-disabled ') + (active == 2 ? 'ui-btn-active' : 'ui-btn')
+  - var historyClass = 'validate history ' + (enableHistory ? '' : 'ui-disabled ') + (active == 2 ? 'ui-btn-active' : 'ui-btn')
   - var logoutClass = 'validate ' + (enableLogout ? '' : 'ui-disabled ') + (active == 3 ? 'ui-btn-active' : 'ui-btn')
   div(data-role='footer', data-position='fixed', data-id='mainFooter')
-    div(data-role='navbar', data-grid='d')
+    div(data-role='navbar')
       ul(class='apple-navbar-ui comboSprite')
         li
-          a(href=historyUrl, data-iconpos='top', data-icon='brands', class=historyClass) History
-            span(class='ui-li-count') 10
+          a(href=promotionUrl, id='promotion', data-icon='features', data-iconpos='top', class=promotionClass) Promotion
         li
-          a(href=promotionUrl, data-iconpos='top', data-icon='features', class=promotionClass) Promotion
+          if count
+            a(href=historyUrl, id='history', data-icon='brands', data-iconpos='top', class=historyClass) History
+              span(class='badge_fixed badge_variable badge_position_right')
+                span(class='badge_count') #{count}
+          else
+            a(href=historyUrl, id='history', data-icon='brands', data-iconpos='top', class=historyClass) History
         li
-          a(href=logoutUrl, data-iconpos='top', data-icon='about', data-ajax=false, class=logoutClass) Logout
+          a(href=logoutUrl, id='logout', data-icon='about', data-iconpos='top', data-ajax=false, class=logoutClass) Logout

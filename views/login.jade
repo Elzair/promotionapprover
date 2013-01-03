@@ -7,6 +7,7 @@ block content
   p(id='promotionIdVal', class='promotionIdVal', hidden) #{promotionId}
   p(class='error') This website requires Javascript & Web Storage to work. Please enable them or use a browser that supports them.
   script(type='text/javascript')
+    $(function(){
     $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
     if (typeof(Storage) !== 'undefined')
       $('.error').html('');
@@ -28,6 +29,9 @@ block content
         } 
       });
     }
+    else
+      $('.login').show();
+    });
     $(function(){
       $('.button').click(function(){
         $('.error').html('');
@@ -67,7 +71,7 @@ block content
     $(function(){
       $('.userId').focus();
     });
-  div(class='login')
+  div(class='login', display='none')
     - var postUrl = '/';
     form(method='post', action=postUrl, class='loginForm')
       input(type='text', name='userId', id='userId', class='userId asis', autocorrect='off', autocapitalize='off', placeholder='Username')

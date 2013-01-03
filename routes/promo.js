@@ -32,21 +32,25 @@ exports.history = function(req, res){
 	    var data = JSON.parse(arr);
 	    // Sort returned data into three groups: Pending, Approved & Rejected
 	    var pending = [], approved = [], rejected = [];
+      var count = 0;
 	    for (promo in data){
 	      for (param in data[promo]){
 	        data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
 	      }
-        if (data[promo]['ApprovalStatus'] == 'Approval In Progress')
+        if (data[promo]['ApprovalStatus'] == 'Approval In Progress'){
           pending.push(data[promo]);
+          count++;
+        }
         else if (data[promo]['ApprovalStatus'] == 'Approved')
           approved.push(data[promo]);
         else
           rejected.push(data[promo]);
 	    }
+      console.log('Count: ' + count);
 	    res.render('promotionlist', {title: 'History', data: data, userId: userId, 
 	      promotionId: promotionId,enablePromotion: enablePromotion, 
-	      enableHistory: true, enableLogout: true, active: 2, pending: pending, 
-	      approved: approved, rejected: rejected});
+	      enableHistory: true, enableLogout: true, active: 2, count: count, 
+        pending: pending, approved: approved, rejected: rejected});
 	  });
   }).end();
 }
@@ -62,7 +66,8 @@ exports.promotion = function(req, res){
   var options = {
     host: res.app.settings['serviceHost'],
     port: res.app.settings['servicePort'],
-	  path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
+	  path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId +
+	    '&userId=' + userId,
 	  method: 'GET'
   };
   http.request(options, function(resp){
@@ -86,9 +91,12 @@ exports.promotion = function(req, res){
               data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
             enableApprover = true;
         }
+        var count = data['PendingCount'] ? data['PendingCount'] : 0;
+        console.log('Count: ' + count);
 	      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
 	        promotionId: promotionId, enablePromotion: true, enableHistory: true, 
-	        enableLogout: true, enableApprover: enableApprover, active: 1});
+	        enableLogout: true, enableApprover: enableApprover, active: 1,
+          count: count});
 	    }
 	  });
   }).end();
@@ -103,6 +111,7 @@ exports.decision = function(req, res){
   var promotionId = req.params.promotionId;
   var decision = misc.getProperty(req.body, 'decision');
   var reason = misc.getProperty(req.body, 'reason');
+  var count = misc.getProperty(req.query, 'count') - 1;
   var path = '';
   var postData = '';
   // Determine if the user is approving or rejecting a promotion
@@ -137,7 +146,8 @@ exports.decision = function(req, res){
 	    var data = '';
       res.render('decision', {title: decision + ' Promotion', data: data, 
         userId: userId, promotionId: promotionId, enablePromotion: true, 
-        enableHistory: true, enableLogout: true, active: 1, decision: decision});
+        enableHistory: true, enableLogout: true, active: 1, count: count, 
+        decision: decision});
     });
     resp.on('error', function(e){
 	    res.render('error', {title: 'Approve/Reject Error', data: JSON.stringify(e)});

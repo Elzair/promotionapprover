@@ -13,7 +13,7 @@ exports.loginPrompt = function(req, res){
   res.render('login', {title: 'Login', data: '', userId: req.params.userId, 
     promotionId: misc.getProperty(req.query, 'promotionId'),
     enablePromotion: false, enableHistory: false, enableLogout: false, 
-    active: 0});
+    active: 0, count: 0});
 }
 
 /*
@@ -63,7 +63,7 @@ exports.login = function(req, res){
     res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), 
       promotionId: misc.getProperty(req.body, 'promotionId'),
       enablePromotion: false, enableHistory: false, enableLogout: false, 
-      active: 0});
+      active: 0, count: 0});
 }
 
 /*
@@ -73,7 +73,7 @@ exports.logout = function(req, res){
 	console.log('Now logging out!');
   res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), 
     promotionId: '', enablePromotion: false, enableHistory: false, enableLogout: true, 
-    active: 3});
+    active: 3, count: 0});
 }
 
 /*
@@ -91,7 +91,7 @@ exports.validate = function(req, res, next){
       userId: misc.getProperty(req.params, 'userId'), 
       promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, 
-      active: 0}); 
+      active: 0, count: 0}); 
   }
   // Next, ensure timeStamp is recent to minimize risk of replay attacks
   else if (Math.abs(new Date().getTime() - req.query.timeStamp) >= 5000){
@@ -100,7 +100,7 @@ exports.validate = function(req, res, next){
       userId: misc.getProperty(req.params, 'userId'), 
       promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, 
-      active: 0});
+      active: 0, count: 0});
   }
   // Then, compare returned hash against one generated from the shared secret
   else{
@@ -137,7 +137,7 @@ exports.validate = function(req, res, next){
               userId: misc.getProperty(req.params, 'userId'), 
               promotionId: misc.getProperty(req.params, 'promotionId'), 
 			        enablePromotion: false, enableHistory: false, 
-			        enableLogout: false, active: 0});
+			        enableLogout: false, active: 0, count: 0});
         }
 	    });
 	    resp.on('error', function(){
