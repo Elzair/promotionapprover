@@ -47,6 +47,19 @@ app.configure('development', function(){
   app.use(express.static(path.join(__dirname, 'ipd')));
 });
 
+if (app.get('env') == 'development'){
+	app.set('serviceHost', 'compdev2');
+	app.set('servicePort', 8087);
+}
+else if (app.get('env') == 'quality assurance'){
+	app.set('serviceHost', 'compqa2');
+	app.set('servicePort', 8087);
+}
+else if (app.get('env') == 'production'){
+	app.set('serviceHost', 'compprod2');
+	app.set('servicePort', 8087);
+}
+
 app.get('/login', user.login);
 app.get('/:userId/login', user.loginPrompt);
 app.post('/:userId/login', user.login);

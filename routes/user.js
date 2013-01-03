@@ -25,11 +25,11 @@ exports.login = function(req, res){
   var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
 	  postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
-	  console.log(postData);
+	  console.log(postData + res.app.settings['serviceHost']);
 	  // Call AuthenticateUser webservice
     var options = {
-	    host: 'compdev2',
-	    port: 8087,
+	    host: res.app.settings['serviceHost'],
+	    port: res.app.settings['servicePort'],
 	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + 
 	      '&password=' + req.body.password,
 	    method: 'POST',
@@ -105,8 +105,8 @@ exports.validate = function(req, res, next){
   // Then, compare returned hash against one generated from the shared secret
   else{
     var options = {
-      host: 'compdev2',
-      port: 8087,
+	    host: res.app.settings['serviceHost'],
+	    port: res.app.settings['servicePort'],
       path: '/api/Utility/GetSharedSecret?userId=' + req.params.userId,
       method: 'GET'
     };

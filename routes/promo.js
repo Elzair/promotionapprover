@@ -17,8 +17,8 @@ exports.history = function(req, res){
     enablePromotion = true;
   // Call webservice to get list of promotions
   var options = {
-	  host: 'compdev2',
-	  port: 8087,
+    host: res.app.settings['serviceHost'],
+    port: res.app.settings['servicePort'],
 	  path: '/api/Promotion/GetPromotionsByUser?userId=' + userId,
 	  method: 'GET'
   };
@@ -60,8 +60,8 @@ exports.promotion = function(req, res){
   var promotionId = req.params.promotionId;
   // Call webservice to retrieve detailed promotion information
   var options = {
-	  host: 'compdev2',
-	  port: 8087,
+    host: res.app.settings['serviceHost'],
+    port: res.app.settings['servicePort'],
 	  path: '/api/Promotion/GetPromotionById?promotionId=' + promotionId,
 	  method: 'GET'
   };
@@ -118,8 +118,8 @@ exports.decision = function(req, res){
   }
   // Post data to remote webservice to approve or reject the promotion
   var options = {
-	  host: 'compdev2',
-	  port: 8087,
+    host: res.app.settings['serviceHost'],
+    port: res.app.settings['servicePort'],
     path: path,
     method: 'POST',
     header: {
@@ -153,8 +153,8 @@ exports.decision = function(req, res){
 exports.media = function(req, res){
   // Call remote webservice to retrieve Base-64 encoded string containing the file 
   var options = {
-	host: 'compdev2',
-	port: 8087,
+    host: res.app.settings['serviceHost'],
+    port: res.app.settings['servicePort'],
     path: '/api/Promotion/GetMediaByFileId?fileId=' + req.params.fileId,
     //path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
     method: 'GET'
