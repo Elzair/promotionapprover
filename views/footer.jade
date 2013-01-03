@@ -2,15 +2,16 @@ block footer
   - var promotionUrl = '/' + userId + '/promotion/' + promotionId
   - var historyUrl = '/' + userId + '/history' + (enablePromotion ? '?lastPromotionId='+promotionId : '')
   - var logoutUrl = '/' + userId + '/logout'
-  - var promotionClass = 'validate ' + (enablePromotion ? '' : 'ui-disabled ') + (active == 1 ? 'ui-btn-active' : '')
-  - var historyClass = 'validate ' + (enableHistory ? '' : 'ui-disabled ') + (active == 2 ? 'ui-btn-active' : '')
-  - var logoutClass = 'validate ' + (enableLogout ? '' : 'ui-disabled ') + (active == 3 ? 'ui-btn-active' : '')
-  div(data-role='footer', data-position='fixed', data-id='myFooter')
-    div(data-role='navbar')
-      ul
+  - var promotionClass = 'validate ' + (enablePromotion ? '' : 'ui-disabled ') + (active == 1 ? 'ui-btn-active' : 'ui-btn')
+  - var historyClass = 'validate ' + (enableHistory ? '' : 'ui-disabled ') + (active == 2 ? 'ui-btn-active' : 'ui-btn')
+  - var logoutClass = 'validate ' + (enableLogout ? '' : 'ui-disabled ') + (active == 3 ? 'ui-btn-active' : 'ui-btn')
+  div(data-role='footer', data-position='fixed', data-id='mainFooter')
+    div(data-role='navbar', data-grid='d')
+      ul(class='apple-navbar-ui comboSprite')
         li
-          a(href=promotionUrl, id='tabA', data-icon='custom', class=promotionClass) Promotion
+          a(href=historyUrl, data-iconpos='top', data-icon='brands', class=historyClass) History
+            span(class='ui-li-count') 10
         li
-          a(href=historyUrl, id='tabB', data-icon='custom', class=historyClass) History
+          a(href=promotionUrl, data-iconpos='top', data-icon='features', class=promotionClass) Promotion
         li
-          a(href=logoutUrl, id='tabC', data-icon='custom', data-ajax=false, class=logoutClass) Logout
+          a(href=logoutUrl, data-iconpos='top', data-icon='about', data-ajax=false, class=logoutClass) Logout
