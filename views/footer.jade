@@ -9,8 +9,8 @@ block footer
     div(data-role='navbar')
       ul
         li
-          a(href=promotionUrl, class=promotionClass) Promotion
+          a(href=promotionUrl, id='tabA', data-icon='custom', class=promotionClass) Promotion
         li
-          a(href=historyUrl, class=historyClass) History
+          a(href=historyUrl, id='tabB', data-icon='custom', class=historyClass) History
         li
-          a(href=logoutUrl, data-ajax=false, class=logoutClass) Logout
+          a(href=logoutUrl, id='tabC', data-icon='custom', data-ajax=false, class=logoutClass) Logout

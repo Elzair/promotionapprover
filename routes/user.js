@@ -1,6 +1,5 @@
 var http = require('http')
   , Hashes = require('jshashes')
-  //, hmac = require('../utils/hmac')
   , misc = require('../utils/misc');
 /*
  * This file mostly deals with user authentication.
@@ -84,19 +83,31 @@ exports.logout = function(req, res){
  */
 exports.validate = function(req, res, next){
   console.log('Beginning validation of this url: ' + req.originalUrl);
+  // First make sure query has necessary parameters.
   if (!req.query.hasOwnProperty('timeStamp') || !req.query.hasOwnProperty('hash') || 
       !req.params.hasOwnProperty('userId')){
     console.log('Getting login info!');
     res.status(500).render('login', {title: 'Login', data: '', 
       userId: misc.getProperty(req.params, 'userId'), 
       promotionId: misc.getProperty(req.params, 'promotionId'), 
-      enablePromotion: false, enableHistory: false, enableLogout: false, active: 0}); 
+      enablePromotion: false, enableHistory: false, enableLogout: false, 
+      active: 0}); 
   }
-  else {
+  // Next, ensure timeStamp is recent to minimize risk of replay attacks
+  else if (Math.abs(new Date().getTime() - req.query.timeStamp) >= 5000){
+	  console.log('Invalid Time Stamp!');
+	  res.status(500).render('login', {title: 'Login', data: '', 
+      userId: misc.getProperty(req.params, 'userId'), 
+      promotionId: misc.getProperty(req.params, 'promotionId'), 
+      enablePromotion: false, enableHistory: false, enableLogout: false, 
+      active: 0});
+  }
+  // Then, compare returned hash against one generated from the shared secret
+  else{
     var options = {
       host: 'compdev2',
       port: 8087,
-      path: '/api/Utility/GetHash?userId=' + req.params.userId,
+      path: '/api/Utility/GetSharedSecret?userId=' + req.params.userId,
       method: 'GET'
     };
     http.request(options, function(resp){
@@ -107,7 +118,7 @@ exports.validate = function(req, res, next){
       });
       resp.on('end', function(){
         var returnedHash = req.query['hash'];
-        // remove their signature from url & sort query parameters
+        // Remove their hash from url & sort query parameters
         var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); 
         var url = req.path;
         var div = '?'

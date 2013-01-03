@@ -123,8 +123,8 @@ exports.decision = function(req, res){
     path: path,
     method: 'POST',
     header: {
-      'content-type': 'application/json',
-      'content-length': postData.length
+      'Content-Type': 'application/json',
+      'Content-Length': postData.length
     }
   };
   var postReq = http.request(options, function(resp){

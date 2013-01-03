@@ -18,7 +18,6 @@ block content
       });
       $(function(){
         $('.button').click(function(){
-          //$('.decision').attr('action', completeUrl($('.decision').attr('action'), localStorage.getItem('CMPHASH')));
           if (!$('input:radio[name=decision]:checked').val()){
             $('.error').html('You must approve or reject the promotion!');
             return false;
@@ -28,20 +27,6 @@ block content
             return false;
           }
           else{
-            $('.error').html('No errors!');
-            /*$.ajax({
-               url: $('.decision').attr('action'),
-               type: 'POST',
-               data: {decision: $('input:radio[name=decision]:checked').val(), reason: $('.reason').val()},
-               success: function(data){
-                 window.location = url;
-                 return true;
-               },
-               error: function(data){
-                 $('.error').html('Something went wrong: ' + JSON.stringify(data));
-                 return false;
-               }
-            });*/
             $('.decision').submit();
             return true;
           }
@@ -58,7 +43,6 @@ block content
       form(method='post', action=postUrl, data-ajax='false', id='decisionForm', class='decision')
         div(data-role='fieldcontain')
           fieldset(data-role='controlgroup', data-type='horizontal', class='decisions')
-            legend Decide:
             input(type='radio', name='decision', id='approves', value='Approve', onClick='approve()')
             label(for='approves') Approve
             input(type='radio', name='decision', id='rejects', value='Reject', onClick='reject()')
@@ -66,8 +50,55 @@ block content
           input(type='text', name='reason', id='reason', class='reason', placeholder='Reason')
         input(type='button', id='submitButton', class='button', value='Submit')
   div#DescId
-    h2 Description
-    p #{data['Description']}
+    p
+      span(class='bolded') Description:
+      | &nbsp
+      span #{data['Description']}
+  div#CreatId
+    p
+      span(class='bolded') Creator:
+      | &nbsp
+      span #{data['CreatorName']}
+      | &nbsp &nbsp
+      if data['CreatorEmail']
+        - var email = 'mailto:' + data['CreatorEmail']
+        a(href=email)
+          img(src='/images/email.png', alt='email')
+        | &nbsp &nbsp
+      if data['CreatorTelephone']
+        - var telephone = 'tel:' + data['CreatorTelephone']
+        a(href=telephone)
+          img(src='/images/telephone.png', alt='telephone number')
+        | &nbsp &nbsp
+      if data['CreatorMobile']
+        - var mobile = 'tel:' + data['CreatorMobile']
+        a(href=mobile)
+          img(src='/images/mobile.png', alt='mobile number')
+  div#MarketingId
+    if data['MarketingObjective']
+      p
+        span(class='bolded') Marketing Objective:
+        | &nbsp
+        span #{data['MarketingObjective']}
+  div#BudgetId
+    if data['Budget']
+      p
+        span(class='bolded') Budget:
+        | &nbsp
+        span #{data['Budget']}
+  div#AdvertisingId
+    if data['AdvertisingCriteria']
+      p
+        span(class='bolded') Advertising Criteria:
+        | &nbsp
+        span #{data['AdvertisingCriteria']}
+  div#ExpirationId
+    if data['EffectiveDate'] || data['ExpireDate']
+      p
+        span(class='bolded') Effective Dates:
+        | &nbsp
+        - var effectivedates = data['EffectiveDate'] + ' - ' + data['ExpireDate']
+        span #{effectivedates}
   div#UsecId
     table(data-role='table')
       thead
@@ -93,86 +124,95 @@ block content
       a(href=bigpath)
         img(src=popuppath)
   div#PrintId
-    h2 Print
-    ul
-      each doc in data['DocumentUploads']
-        - var docurl = '/media/' + doc['FileId']
-        #docurl
+    if data['DocumentUploads']
+      p(class='bolded') Print
+      ul
+        each doc in data['DocumentUploads']
+          - var docurl = '/media/' + doc['FileId']
           li
             a(href=docurl, data-ajax='false')
               p.filename #{doc['FileName']}
   div#AudioId
-    h2 Audio
-    ul
-      each audio in data['AudioUploads']
-        - var audurl = '/media/' + audio['FileId']
-        #audurl
+    if data['AudioUploads']
+      p(class='bolded') Audio
+      ul
+        each audio in data['AudioUploads']
+          - var audurl = '/media/' + audio['FileId']
           li
             a(href=audurl, data-ajax='false') 
               p.filename #{audio['FileName']}
   div#VideoId
-    h2 Video
-    ul
-      each video in data['VideoUploads']
-        - var vidurl = '/media/' + video['FileId']
-        #vidurl
+    if data['VideoUploads']
+      p(class='bolded') Video
+      ul
+        each video in data['VideoUploads']
+          - var vidurl = '/media/' + video['FileId']
           li
             a(href=vidurl, data-ajax='false') 
               p.filename #{video['FileName']}
   div#ServicesId
-    h2 Target Services
-    ul
-      each service in data['TargetServices']
-        p #{service}
-  div#MarketingId
-    h2 Marketing Objective
-    p #{data['MarketingObjective']}
-  div#BudgetId
-    h2 Budget
-    p #{data['Budget']}
-  div#AdvertisingId
-    h2 Advertising Criteria
-    p #{data['AdvertisingCriteria']}
+    if data['TargetServices']
+      p(class='bolded') Target Services:
+      ul
+        each service in data['TargetServices']
+          li
+            p #{service}
   div#CommunicationId
-    h2 Communication Types
-    ul
-      each type in data['CommunicationTypes']
-        li 
-          p #{type}
+    if data['CommunicationTypes']
+      p(class='bolded') Communication Types:
+      ul
+        each type in data['CommunicationTypes']
+          li 
+            p #{type}
   div#CommunityId
-    h2 Communities
-    ul
-      each location in data['Locations']
-        - var loc = location['LibName'] + ': ' + location['Community']
-        li
-          p #{loc}
+    if data['Locations']
+      p(class='bolded') Communities:
+      ul
+        each location in data['Locations']
+          - var loc = location['LibName'] + ': ' + location['Community']
+          li
+            p #{loc}
   div#StatusId
-    h2 Customer Status
-    p #{data['CustomerStatus']}
+    if data['CustomerStatus']
+      p
+        span(class='bolded') Customer Status:
+        span #{data['CustomerStatus']}
   div#TypeId
-    h2 Customer Type
-    p #{data['CustomerType']}
+    if data['CustomerType']
+      p
+        span(class='bolded') Customer Type:
+        span #{data['CustomerType']}
   div#DatesId
-    h2 Communication Dates
-    - var communicationdates = data['StartDate'] + ' - ' + data['EndDate'] 
-    p #{communicationdates}
-  div#ExpirationId
-    h2 Effective Dates
-    - var effectivedates = data['EffectiveDate'] + ' - ' + data['ExpireDate']
-    p #{effectivedates}
+    if data['StartDate'] && data['EndDate']
+      p
+        span(class='bolded') Communication Dates:
+        - var communicationdates = data['StartDate'] + ' - ' + data['EndDate'] 
+        span #{communicationdates}
+
   div#ContractId
-    h2 Requires Contract
-    p #{data['RequiresContract']}
+    if data['RequiresContract']
+      p
+        span(class='bolded') Requires Contract: 
+        span #{data['RequiresContract']}
   div#TrainingId
-    h2 Requires Training
-    p #{data['RequiresTraining']}
+    if data['RequiresTraining']
+      p
+        span(class='bolded') Requires Training: 
+        span #{data['RequiresTraining']}
   div#CategoryId
-    h2 Category
-    p #{data['Category']}
+    if data['Category']
+      p
+        span(class='bolded') Category:
+        span #{data['Category']}
   div#QuickId
-    h2 Quick View
-    p #{data['QuickView']}
+    if data['QuickView']
+      p
+        span(class='bolded') Quick View:
+        span #{data['QuickView']}
   div#CommentId
-    h2 Comments
-    p #{data['Comments']}
+    if data['Comments']
+      p
+        span(class='bolded') Comments:
+        span #{data['Comments']}
+    p
   include footer
