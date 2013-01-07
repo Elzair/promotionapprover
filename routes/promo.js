@@ -84,8 +84,10 @@ exports.promotion = function(req, res){
 	        data: 'Cannot find this promotion!'});
 	    else{
 		    // Enable approving & rejecting promotion if user is authorized
-	      var enableApprover = false;
+	      var enableApprover = false, canView = false;
         for (approver in data['Approvers']){
+          if (data['Approvers'][approver]['UserId'] == userId)
+            canView = true;
           if (data['ApprovalStatus'] != 3 && data['Approvers'][approver]['UserId'] == userId && 
              (data['Approvers'][approver]['ApprovalStatus'] == 1 || 
               data['Approvers'][approver]['Role'].toUpperCase() == 'ADMIN'))
@@ -93,10 +95,14 @@ exports.promotion = function(req, res){
         }
         var count = data['PendingCount'] ? data['PendingCount'] : 0;
         console.log('Count: ' + count);
-	      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
-	        promotionId: promotionId, enablePromotion: true, enableHistory: true, 
-	        enableLogout: true, enableApprover: enableApprover, active: 1,
-          count: count});
+        if (canView == true)
+	        res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
+	          promotionId: promotionId, enablePromotion: true, enableHistory: true, 
+	          enableLogout: true, enableApprover: enableApprover, active: 1,
+            count: count});
+        else
+          res.status(500).render('error', {title: 'Promotion  Error',
+            data: 'You do not have authorization to view this promotion!'});
 	    }
 	  });
   }).end();
