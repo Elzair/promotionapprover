@@ -77,13 +77,13 @@ exports.promotion = function(req, res){
 	    arr += chunk;
     });
 	  resp.on('end', function (){
-	    var data = JSON.parse(arr);
 	    // Handle case when webservice returns no data
 	    if (resp.statusCode != 200)
 	      res.status(404).render('error', {title: 'Promotion Error', 
 	        data: 'Cannot find this promotion!'});
 	    else{
 		    // Enable approving & rejecting promotion if user is authorized
+        var data = JSON.parse(arr);
 	      var enableApprover = false, canView = false;
         for (approver in data['Approvers']){
           if (data['Approvers'][approver]['UserId'] == userId)
@@ -112,7 +112,7 @@ exports.promotion = function(req, res){
  * Handles approving & rejecting promotions
  */
 exports.decision = function(req, res){
-  console.log(JSON.stringify(req.params) + JSON.stringify(req.body));
+  console.log('Approving / Rejecting a Promotion!');
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
   var decision = misc.getProperty(req.body, 'decision');
@@ -122,14 +122,13 @@ exports.decision = function(req, res){
   var postData = '';
   // Determine if the user is approving or rejecting a promotion
   if (decision == 'Approve') {	
-    path = '/api/Promotion/ApprovePromotion?promotionId=' + 
-      promotionId + '&userId=' + userId;
-    postData = JSON.stringify({promotionId: promotionId, userId: userId});
+    path = '/api/Promotion/ApprovePromotion';
+    postData = 'promotionId=' + promotionId + '&userId=' + userId;
   }
   else if (decision == 'Reject') {
-    path = '/api/Promotion/RejectPromotion?promotionId=' + promotionId + 
-      '&userId=' + userId + '&reasonText=' + encodeURIComponent(reason);
-    postData = JSON.stringify({id: promotionId, userId: userId, reasonText: reason});
+    path = '/api/Promotion/RejectPromotion';
+    postData = 'promotionId=' + promotionId + '&userId=' + userId + 
+      '&reasonText=' + encodeUriComponent(reason);
   }
   // Post data to remote webservice to approve or reject the promotion
   var options = {
@@ -138,7 +137,7 @@ exports.decision = function(req, res){
     path: path,
     method: 'POST',
     header: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': postData.length
     }
   };
@@ -149,18 +148,23 @@ exports.decision = function(req, res){
 	    arr += chunk;
     });
 	  resp.on('end', function(){
-	    var data = '';
-      res.render('decision', {title: decision + ' Promotion', data: data, 
-        userId: userId, promotionId: promotionId, enablePromotion: true, 
-        enableHistory: true, enableLogout: true, active: 1, count: count, 
-        decision: decision});
+      if (resp.statusCode != 200)
+        res.render('error', {title: 'Approve/Reject Error',
+          data: 'Could not approve/reject promotion!'
+        });
+      else
+        res.render('decision', {title: decision + ' Promotion', data: '', 
+          userId: userId, promotionId: promotionId, enablePromotion: true, 
+          enableHistory: true, enableLogout: true, active: 1, count: count, 
+          decision: decision});
     });
+    // Handle errors
     resp.on('error', function(e){
 	    res.render('error', {title: 'Approve/Reject Error', data: JSON.stringify(e)});
     });
   });
-  postReq.write(postData);
-  postReq.end();
+  postReq.write(postData); // POST data to server
+  postReq.end(); // end http.request
 }
 
 /*
@@ -179,7 +183,7 @@ exports.media = function(req, res){
 	  if (resp.statusCode != 200)
 		  return;
 	  resp.setEncoding('utf8');
-      var arr = '';
+    var arr = '';
 	  resp.on('data', function (chunk){
       arr += chunk;
 	  });

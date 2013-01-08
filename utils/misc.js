@@ -4,6 +4,16 @@ exports.getProperty = function(obj, p){
   return obj.hasOwnProperty(p) ? obj[p] : '';
 }
 
+exports.getAllProperties = function(obj){
+  if (obj == null)
+    return null;
+  var no = new Object();
+  for (prop in obj)
+    if (obj.hasOwnProperty(prop))
+      no[prop] = obj[prop];
+  return no;
+}
+
 exports.sortProperties = function(obj){
 	if (obj == null)
 	  return obj;

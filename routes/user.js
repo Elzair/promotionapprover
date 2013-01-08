@@ -1,4 +1,5 @@
 var http = require('http')
+  , request = require('request')
   , Hashes = require('jshashes')
   , misc = require('../utils/misc');
 /*
@@ -22,23 +23,31 @@ exports.loginPrompt = function(req, res){
  */
 exports.login = function(req, res){
   console.log('Logging in with info: ' + JSON.stringify(req.body));
-  var postData = '';
   if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
-	  postData = JSON.stringify({userId: req.body.userId, password: req.body.password});
-	  console.log(postData + res.app.settings['serviceHost']);
+	  var postData = JSON.stringify({userId: misc.getProperty(req.body, 'userId'), 
+      password: misc.getProperty(req.body, 'password')
+    });
+	  console.log(postData+' ' +res.app.settings['serviceHost']+':'+res.app.settings['servicePort']);
 	  // Call AuthenticateUser webservice
-    var options = {
+    var postData = new Object();
+    console.log(JSON.stringify(misc.getAllProperties(req.body)));
+	  var r = request.post(
+		  'http://' + res.app.settings['serviceHost'] + ':' + res.app.settings['servicePort'] + '/api/Utility/AuthenticateUser',
+      {body: 'userId='+req.body.userId+'&password='+req.body.password}
+    );
+    r.pipe(res);
+    /*var options = {
 	    host: res.app.settings['serviceHost'],
 	    port: res.app.settings['servicePort'],
-	    path: '/api/Utility/AuthenticateUser?userId=' + req.body.userId + 
-	      '&password=' + req.body.password,
+	    path: '/api/Utility/AuthenticateUser',
 	    method: 'POST',
       header: {
-        'Content-Type': 'application/json',
-        'Content-Length': postData.length
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': postData.length,
+        'Connection': 'keep-alive'
       }
 	  };		
-    var postReq = http.request(options, function(resp){
+    http.request(options, function(resp){
 	    resp.setEncoding('utf8');
       var arr = '';
       resp.on('data', function (chunk){
@@ -55,9 +64,10 @@ exports.login = function(req, res){
         });
         res.end(JSON.stringify(data));
       });
-    });
-    postReq.write(postData);
-    postReq.end();
+    }).end(JSON.stringify(postData));
+    //postReq.write(postData);
+    //postReq.end();
+    */
   }
   else
     res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), 
