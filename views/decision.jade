@@ -7,7 +7,7 @@ block content
     p(class='userId', hidden) #{userId}
     script(type='text/javascript')
       setTimeout(function(){
-        window.location = completeUrl('/' + $('.userId').html() + '/login', localStorage.getItem('CMPHASH'));
+        window.location = completeUrl('/' + $('.userId').html() + '/history', localStorage.getItem('CMPHASH'));
       }, 3000);
   div(class='centered')
     if decision == 'Approve'

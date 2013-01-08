@@ -28,15 +28,13 @@ exports.login = function(req, res){
   if (userId !== '' && password !== ''){
 	  // Call AuthenticateUser webservice
     var postData = 'userId='+userId+'&password='+password;
-    //console.log(JSON.stringify(postData));
-    var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser'
-	  var r = request(
+    var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser';
+	  request(
       {url: url, body: postData, method: 'POST', headers: {
 	      'Content-Type': 'application/x-www-form-urlencoded', 
 	      'Content-Length': postData.length, 'Accept': '*/*'}
 	    },
       function(e, r, user){
-	      //console.log(user);
 	      res.writeHead(200, {
 		      'Content-Type': 'application/x-www-form-urlencoded',
 		      'Content-Length': user.length

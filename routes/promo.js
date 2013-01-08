@@ -1,4 +1,5 @@
 var http = require('http')
+  , request = require('request')
   , misc = require('../utils/misc');
 
 /*
@@ -117,21 +118,34 @@ exports.decision = function(req, res){
   var promotionId = req.params.promotionId;
   var decision = misc.getProperty(req.body, 'decision');
   var reason = misc.getProperty(req.body, 'reason');
-  var count = misc.getProperty(req.query, 'count') - 1;
-  var path = '';
+  var count = misc.getProperty(req.query, 'count');
+  if (count > 0) count--;
+  var url = '';
   var postData = '';
   // Determine if the user is approving or rejecting a promotion
   if (decision == 'Approve') {	
-    path = '/api/Promotion/ApprovePromotion';
+    path = res.app.settings['serviceUrl'] + '/api/Promotion/ApprovePromotion';
     postData = 'promotionId=' + promotionId + '&userId=' + userId;
   }
   else if (decision == 'Reject') {
-    path = '/api/Promotion/RejectPromotion';
+    path = res.app.settings['serviceUrl'] + '/api/Promotion/RejectPromotion';
     postData = 'promotionId=' + promotionId + '&userId=' + userId + 
       '&reasonText=' + encodeUriComponent(reason);
   }
   // Post data to remote webservice to approve or reject the promotion
-  var options = {
+  request(
+    {url: url, body: postData, method: 'POST', headers: {
+      'Content-Type': 'application/x-www-form-urlencoded', 
+      'Content-Length': postData.length, 'Accept': '*/*'}
+    },
+    function(e, r, user){
+      res.render('decision', {title: decision + ' Promotion', data: '', 
+        userId: userId, promotionId: promotionId, enablePromotion: true, 
+        enableHistory: true, enableLogout: true, active: 1, count: count, 
+        decision: decision});
+    }
+  );
+  /*var options = {
     host: res.app.settings['serviceHost'],
     port: res.app.settings['servicePort'],
     path: path,
@@ -165,6 +179,7 @@ exports.decision = function(req, res){
   });
   postReq.write(postData); // POST data to server
   postReq.end(); // end http.request
+  */
 }
 
 /*
