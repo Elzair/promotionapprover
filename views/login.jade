@@ -41,7 +41,7 @@ block content
             type: 'POST',
             data: {userId: $('.userId').val(), password: $('.password').val()},
             success: function(data){
-              localStorage.setItem('CMPHASH', data['Hash']);
+              localStorage.setItem('CMPHASH', JSON.parse(data)['Hash']);
               window.location = completeUrl('/' + $('.userId').val() + 
               [$('.promotionIdVal').text() == '' ? '/history' : '/promotion/' + 
               $('.promotionIdVal').text()], localStorage.getItem('CMPHASH'));

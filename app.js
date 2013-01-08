@@ -22,7 +22,6 @@ app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.set('serviceProtocol', 'http://');
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -41,7 +40,7 @@ app.configure(function(){
     else
       res.type('txt').send('Invalid Request!');
   });
-});
+});	
 
 app.configure('development', function(){
   //app.use(express.errorHandler());
@@ -61,8 +60,8 @@ else if (app.get('env') == 'production'){
 	app.set('servicePort', 8087);
 }
 
-
-app.set('serviceUrl', app.get('serivceProtocol') + app.get('serviceHost') + 
+app.set('serviceProtocol', 'http://');
+app.set('serviceUrl', app.get('serviceProtocol') + app.get('serviceHost') + 
   ':' + app.get('servicePort'));
 
 app.get('/login', user.login);

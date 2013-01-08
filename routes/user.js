@@ -23,19 +23,27 @@ exports.loginPrompt = function(req, res){
  */
 exports.login = function(req, res){
   console.log('Logging in with info: ' + JSON.stringify(req.body));
-  if (req.body.hasOwnProperty('userId') && req.body.hasOwnProperty('password')){
-	  var postData = JSON.stringify({userId: misc.getProperty(req.body, 'userId'), 
-      password: misc.getProperty(req.body, 'password')
-    });
-	  console.log(postData+' ' +res.app.settings['serviceHost']+':'+res.app.settings['servicePort']);
+  var userId = misc.getProperty(req.body, 'userId');
+  var password = misc.getProperty(req.body, 'password');
+  if (userId !== '' && password !== ''){
 	  // Call AuthenticateUser webservice
-    var postData = new Object();
-    console.log(JSON.stringify(misc.getAllProperties(req.body)));
-	  var r = request.post(
-		  'http://' + res.app.settings['serviceHost'] + ':' + res.app.settings['servicePort'] + '/api/Utility/AuthenticateUser',
-      {body: 'userId='+req.body.userId+'&password='+req.body.password}
+    var postData = 'userId='+userId+'&password='+password;
+    //console.log(JSON.stringify(postData));
+    var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser'
+	  var r = request(
+      {url: url, body: postData, method: 'POST', headers: {
+	      'Content-Type': 'application/x-www-form-urlencoded', 
+	      'Content-Length': postData.length, 'Accept': '*/*'}
+	    },
+      function(e, r, user){
+	      //console.log(user);
+	      res.writeHead(200, {
+		      'Content-Type': 'application/x-www-form-urlencoded',
+		      'Content-Length': user.length
+	      });
+				res.end(user);
+      }
     );
-    r.pipe(res);
     /*var options = {
 	    host: res.app.settings['serviceHost'],
 	    port: res.app.settings['servicePort'],
