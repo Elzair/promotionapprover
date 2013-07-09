@@ -3,10 +3,6 @@ var http = require('http');
  * GET home page.
  */
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
-};
-
 exports.history = function(req, res){
   var userId = req.params.userId;
   var promotionId = null;
@@ -29,24 +25,30 @@ exports.history = function(req, res){
     resp.on('data', function (chunk){
 	  arr += chunk;
     });
-	resp.on('end', function (){
-		console.log(arr);
-	  var data = JSON.parse(arr);
-	  var pending = [], approved = [], rejected = [];
-	  for (promo in data){
-	    for (param in data[promo]){
-	      data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
-	    }
-      if (data[promo]['ApprovalStatus'] == 'Approval In Progress')
-        pending.push(data[promo]);
-      else if (data[promo]['ApprovalStatus'] == 'Approved')
-        approved.push(data[promo]);
-      else
-        rejected.push(data[promo]);
-	  }
-	  res.render('promotionlist', {title: 'History', data: data, userId: userId, promotionId: promotionId,
-        enablePromotion: enablePromotion, enableHistory: true, enableLogout: true, active: 2, pending: pending, approved: approved, rejected: rejected});
-	});
+    resp.on('end', function (){
+      console.log(arr);
+      var data = JSON.parse(arr);
+      var pending = [], approved = [], rejected = [];
+      for (promo in data){
+        for (param in data[promo]){
+          data[promo][param] = data[promo][param].replace(/&amp;/g, '&');
+        }
+        if (data[promo]['ApprovalStatus'] === 'Approval In Progress'){
+          pending.push(data[promo]);
+        }
+        else if (data[promo]['ApprovalStatus'] === 'Approved'){
+          approved.push(data[promo]);
+        }
+        else{
+          rejected.push(data[promo]);
+        }
+      }
+      res.render('promotionlist', {title: 'History', data: data, userId: userId, 
+        promotionId: promotionId, enablePromotion: enablePromotion, 
+        enableHistory: true, enableLogout: true, active: 2, pending: pending, 
+        approved: approved, rejected: rejected}
+      );
+    });
   }).end();
 }
 
@@ -66,15 +68,16 @@ exports.promotion = function(req, res){
     resp.on('data', function (chunk){
 	  arr += chunk;
     });
-	resp.on('end', function (){
-	  var data = JSON.parse(arr);
-	  //console.log(JSON.stringify(data));
-	  var enableApprover = false;
-	  if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
-	    enableApprover = true;
-	  res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
-	    enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1});
-	});
+    resp.on('end', function (){
+      var data = JSON.parse(arr);
+      //console.log(JSON.stringify(data));
+      var enableApprover = false;
+      if (data['ApprovalStatus'] == 1 || data['ApprovalStatus'] == 2)
+        enableApprover = true;
+      res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, promotionId: promotionId,
+        enablePromotion: true, enableHistory: true, enableLogout: true, enableApprover: enableApprover, active: 1}
+      );
+    });
   }).end();
 };
 
@@ -100,8 +103,8 @@ exports.decision = function(req, res){
     postData = JSON.stringify({id: promotionId, reason: reason});
   }
   var options = {
-	  host: 'compdev2',
-	  port: 8087,
+    host: 'compdev2',
+    port: 8087,
     path: path,
     method: 'POST',
     header: {
@@ -113,16 +116,17 @@ exports.decision = function(req, res){
     console.log('STATUS: ' + resp.statusCode);
     console.log('HEADERS: ' + JSON.stringify(resp.headers));
     resp.setEncoding('utf8');
-	  var arr = '';
+    var arr = '';
     resp.on('data', function (chunk){
-	    arr += chunk;
+      arr += chunk;
     });
-	  resp.on('end', function (){
-	    var data = JSON.parse(arr);
-	    console.log('BODY: ' + JSON.stringify(data));
-	    //res.redirect('/' + userId + '/history');
+    resp.on('end', function (){
+      var data = JSON.parse(arr);
+      console.log('BODY: ' + JSON.stringify(data));
+      //res.redirect('/' + userId + '/history');
       res.render('decision', {title: decision + ' Promotion', data: data, userId: userId, promotionId: promotionId, 
-        enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail});
+        enablePromotion: true, enableHistory: true, enableLogout: true, active: 0, decision: decision, creatorEmail: creatorEmail}
+      );
     });
   });
   postReq.write(postData);
@@ -131,8 +135,8 @@ exports.decision = function(req, res){
 
 exports.media = function(req, res){
   var options = {
-	host: 'compdev2',
-	port: 8087,
+    host: 'compdev2',
+    port: 8087,
     path: '/api/Promotion/GetMediaFile?fileId=' + req.params.fileId,
     //path: '/PromotionWcfR/GetPromotionMediaById?fileId=' + req.params.fileId,
     method: 'GET'

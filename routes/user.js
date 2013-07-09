@@ -26,23 +26,23 @@ exports.login = function(req, res){
   var userId = misc.getProperty(req.body, 'userId');
   var password = misc.getProperty(req.body, 'password');
   if (userId !== '' && password !== ''){
-	  // Call AuthenticateUser webservice
+    // Call AuthenticateUser webservice
     var postData = 'userId='+userId+'&password='+password;
     var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser';
-	  request(
-      {url: url, body: postData, method: 'POST', headers: {
-	      'Content-Type': 'application/x-www-form-urlencoded', 
-	      'Content-Length': postData.length, 'Accept': '*/*'}
-	    },
-      function(e, r, user){
-	      res.writeHead(200, {
-		      'Content-Type': 'application/x-www-form-urlencoded',
-		      'Content-Length': user.length
-	      });
-				res.end(user);
-      }
-    );
-    /*var options = {
+    //request(
+    //  {url: url, body: postData, method: 'POST', headers: {
+    //          'Content-Type': 'application/x-www-form-urlencoded', 
+    //          'Content-Length': postData.length, 'Accept': '*/*'}
+    //        },
+    //  function(e, r, user){
+    //          res.writeHead(200, {
+    //    	      'Content-Type': 'application/x-www-form-urlencoded',
+    //    	      'Content-Length': user.length
+    //          });
+    //    			res.end(user);
+    //  }
+    //);
+    var options = {
 	    host: res.app.settings['serviceHost'],
 	    port: res.app.settings['servicePort'],
 	    path: '/api/Utility/AuthenticateUser',
@@ -73,23 +73,25 @@ exports.login = function(req, res){
     }).end(JSON.stringify(postData));
     //postReq.write(postData);
     //postReq.end();
-    */
   }
-  else
+  else{
     res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), 
       promotionId: misc.getProperty(req.body, 'promotionId'),
       enablePromotion: false, enableHistory: false, enableLogout: false, 
-      active: 0, count: 0});
+      active: 0, count: 0}
+    );
+  }
 }
 
 /*
  * Log user out of system (basically delete their authentication token)
  */
 exports.logout = function(req, res){
-	console.log('Now logging out!');
+  console.log('Now logging out!');
   res.render('logout', {title: 'Logout', data: '', userId: misc.getProperty(req.params, 'userId'), 
     promotionId: '', enablePromotion: false, enableHistory: false, enableLogout: true, 
-    active: 3, count: 0});
+    active: 3, count: 0}
+  );
 }
 
 /*
@@ -111,8 +113,8 @@ exports.validate = function(req, res, next){
   }
   // Next, ensure timeStamp is recent to minimize risk of replay attacks
   else if (Math.abs(new Date().getTime() - req.query.timeStamp) >= 5000){
-	  console.log('Invalid Time Stamp!');
-	  res.status(500).render('login', {title: 'Login', data: '', 
+      console.log('Invalid Time Stamp!');
+      res.status(500).render('login', {title: 'Login', data: '', 
       userId: misc.getProperty(req.params, 'userId'), 
       promotionId: misc.getProperty(req.params, 'promotionId'), 
       enablePromotion: false, enableHistory: false, enableLogout: false, 
@@ -121,8 +123,8 @@ exports.validate = function(req, res, next){
   // Then, compare returned hash against one generated from the shared secret
   else{
     var options = {
-	    host: res.app.settings['serviceHost'],
-	    port: res.app.settings['servicePort'],
+      host: res.app.settings['serviceHost'],
+      port: res.app.settings['servicePort'],
       path: '/api/Utility/GetSharedSecret?userId=' + req.params.userId,
       method: 'GET'
     };
@@ -149,17 +151,19 @@ exports.validate = function(req, res, next){
           next();
         else{
           console.log('Incorrect info! Retrieving new login information!');
-            res.status(500).render('login', {title: 'Login', data: '', 
-              userId: misc.getProperty(req.params, 'userId'), 
-              promotionId: misc.getProperty(req.params, 'promotionId'), 
-			        enablePromotion: false, enableHistory: false, 
-			        enableLogout: false, active: 0, count: 0});
+          res.status(500).render('login', {title: 'Login', data: '', 
+            userId: misc.getProperty(req.params, 'userId'), 
+            promotionId: misc.getProperty(req.params, 'promotionId'), 
+	    enablePromotion: false, enableHistory: false, 
+	    enableLogout: false, active: 0, count: 0}
+          );
         }
-	    });
-	    resp.on('error', function(){
-		    res.status(500).render('error', {title: 'Error', 
-		      data: 'Invalid login credentials!'});
-	    });
+      });
+      resp.on('error', function(){
+        res.status(500).render('error', {title: 'Error', 
+          data: 'Invalid login credentials!'}
+        );
+      });
     }).end();
   }
 }
@@ -168,7 +172,7 @@ exports.validate = function(req, res, next){
  * Test path to check if a user can access the system
  */
 exports.valid = function(req, res){
-	console.log('User is authenticated.');
-	var data = JSON.stringify({Status: 'Success'});
-	res.status(200).end();
+  console.log('User is authenticated.');
+  var data = JSON.stringify({Status: 'Success'});
+  res.status(200).end();
 }
