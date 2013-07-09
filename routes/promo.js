@@ -83,13 +83,15 @@ exports.promotion = function(req, res){
     });
     resp.on('end', function (){
       // Handle case when webservice returns no data
-      if (resp.statusCode != 200)
+      if (resp.statusCode != 200){
         res.status(404).render('error', {title: 'Promotion Error', 
-          data: 'Cannot find this promotion!'});
+          data: 'Cannot find this promotion!'}
+        );
+      }
       else{
         // Enable approving & rejecting promotion if user is authorized
         var data = JSON.parse(arr);
-	      var enableApprover = false, canView = false;
+	var enableApprover = false, canView = false;
         for (approver in data['Approvers']){
           if (data['Approvers'][approver]['UserId'] == userId)
             canView = true;
@@ -100,14 +102,16 @@ exports.promotion = function(req, res){
         }
         var count = data['PendingCount'] ? data['PendingCount'] : 0;
         console.log('Count: ' + count);
-        if (canView == true)
-	        res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
-	          promotionId: promotionId, enablePromotion: true, enableHistory: true, 
-	          enableLogout: true, enableApprover: enableApprover, active: 1,
+        if (canView == true){
+	  res.render('promotiondetail', {title: 'Detail', data: data, userId: userId, 
+	    promotionId: promotionId, enablePromotion: true, enableHistory: true, 
+	    enableLogout: true, enableApprover: enableApprover, active: 1,
             count: count});
-        else
+        }
+        else{
           res.status(500).render('error', {title: 'Promotion  Error',
-            data: 'You do not have authorization to view this promotion!'});
+            data: 'You do not have authorization to view this promotion!'}
+        );
       }
     });
   }).end();
