@@ -32,13 +32,16 @@ app.configure(function(){
   app.use(require('stylus').middleware(__dirname + '/public'));
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(function(req, res, next){
-	  res.status(404);
-	  if (req.accepts('html'))
-	    res.render('error', {title: 'Error', data: 'Invalid Request!'});
-	  else if (req.accepts('json'))
+    res.status(404);
+    if (req.accepts('html')){
+      res.render('error', {title: 'Error', data: 'Invalid Request!'});
+    }
+    else if (req.accepts('json')){
       res.send({error: 'Invalid Request!'});
-    else
+    }
+    else{
       res.type('txt').send('Invalid Request!');
+    }
   });
 });	
 
@@ -47,17 +50,17 @@ app.configure('development', function(){
   app.use(express.static(path.join(__dirname, 'ipd')));
 });
 
-if (app.get('env') == 'development'){
-	app.set('serviceHost', 'compdev2');
-	app.set('servicePort', 8087);
+if (app.get('env') === 'development'){
+  app.set('serviceHost', 'compdev2');
+  app.set('servicePort', 8087);
 }
-else if (app.get('env') == 'quality assurance'){
-	app.set('serviceHost', 'compqa2');
-	app.set('servicePort', 8087);
+else if (app.get('env') === 'quality assurance'){
+  app.set('serviceHost', 'compqa2');
+  app.set('servicePort', 8087);
 }
-else if (app.get('env') == 'production'){
-	app.set('serviceHost', 'compprod2');
-	app.set('servicePort', 8087);
+else if (app.get('env') === 'production'){
+  app.set('serviceHost', 'compprod2');
+  app.set('servicePort', 8087);
 }
 
 app.set('serviceProtocol', 'http://');
