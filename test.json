@@ -5,7 +5,8 @@
     , "CreatorName": "Philip Woods"
     , "EffectiveDate": "01/01/2013"
     , "ExpireDate": "02/15/2013"
-    , "ApprovalStatus": "Approval In Progress"
+    , "ApprovalStatus": 1
+    , "RejectionReason": ""
     , "CreatorEmail": "philip.woods@comporium.com"
     , "CreatorTelephone": "7068688095"
     , "CreatorMobile": "7049603236"
