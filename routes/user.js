@@ -1,5 +1,6 @@
 var http = require('http')
   , request = require('request')
+  , fs = require('fs')
   , Hashes = require('jshashes')
   , misc = require('../utils/misc');
 /*
@@ -10,12 +11,12 @@ var http = require('http')
  * Show login prompt
  */
 exports.loginPrompt = function(req, res){
-	console.log('Showing Login prompt!');
+  console.log('Showing Login prompt!');
   res.render('login', {title: 'Login', data: '', userId: req.params.userId, 
     promotionId: misc.getProperty(req.query, 'promotionId'),
     enablePromotion: false, enableHistory: false, enableLogout: false, 
     active: 0, count: 0});
-}
+};
 
 /*
  * Store user's credentials on a remote server & return 
@@ -26,53 +27,90 @@ exports.login = function(req, res){
   var userId = misc.getProperty(req.body, 'userId');
   var password = misc.getProperty(req.body, 'password');
   if (userId !== '' && password !== ''){
-    // Call AuthenticateUser webservice
-    var postData = 'userId='+userId+'&password='+password;
-    var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser';
-    //request(
-    //  {url: url, body: postData, method: 'POST', headers: {
-    //          'Content-Type': 'application/x-www-form-urlencoded', 
-    //          'Content-Length': postData.length, 'Accept': '*/*'}
-    //        },
-    //  function(e, r, user){
-    //          res.writeHead(200, {
-    //    	      'Content-Type': 'application/x-www-form-urlencoded',
-    //    	      'Content-Length': user.length
-    //          });
-    //    			res.end(user);
-    //  }
-    //);
-    var options = {
-	    host: res.app.settings['serviceHost'],
-	    port: res.app.settings['servicePort'],
-	    path: '/api/Utility/AuthenticateUser',
-	    method: 'POST',
-      header: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': postData.length,
-        'Connection': 'keep-alive'
+    // Retrieve values from database 
+    fs.readFile('test.json', function(err, data){
+      if (err){
+        console.log('Error: %s', err);
+        throw err;
       }
-	  };		
-    http.request(options, function(resp){
-	    resp.setEncoding('utf8');
-      var arr = '';
-      resp.on('data', function (chunk){
-        arr += chunk;
-      });
-	    resp.on('end', function (){
-	      var data = JSON.parse(arr);
-	      // Handle error
-        var returnCode = 200;
-        if (data['Hash'] == 'ERROR')
-          returnCode = 500;
-	      res.writeHead(returnCode, {
-		      'Content-Type': 'application/json',
+
+      var db = JSON.parse(data);
+      var users = db.Users;
+      console.log('%j', db);
+
+      // Validate user
+      var isValid = false;
+      for (u in users){
+        if (users[u].UserId === userId && users[u].Password === password){
+          db.Users[u].Hash = '53490743095374037533885823825';
+          isValid = true; 
+        }
+      }
+
+      if (isValid){
+        var out = JSON.stringify(db, undefined, 2);
+        fs.writeFile('test.json', out, function(err){
+          if (err){
+            console.log('Error: %s', err);
+            throw err;
+          }
+            
+          res.status(200).end(JSON.stringify(db.Users[u]));
         });
-        res.end(JSON.stringify(data));
-      });
-    }).end(JSON.stringify(postData));
-    //postReq.write(postData);
-    //postReq.end();
+      }
+      else{
+        ret = { UserId: userId, Password: password, Hash: 'ERROR'};
+        res.status(500).end(JSON.stringify(ret));
+      }
+    });
+
+    //// Call AuthenticateUser webservice
+    //var postData = 'userId='+userId+'&password='+password;
+    //var url = res.app.settings['serviceUrl'] + '/api/Utility/AuthenticateUser';
+    ////request(
+    ////  {url: url, body: postData, method: 'POST', headers: {
+    ////          'Content-Type': 'application/x-www-form-urlencoded', 
+    ////          'Content-Length': postData.length, 'Accept': '*/*'}
+    ////        },
+    ////  function(e, r, user){
+    ////          res.writeHead(200, {
+    ////    	      'Content-Type': 'application/x-www-form-urlencoded',
+    ////    	      'Content-Length': user.length
+    ////          });
+    ////    			res.end(user);
+    ////  }
+    ////);
+    //var options = {
+    //  host: res.app.settings['serviceHost'],
+    //  port: res.app.settings['servicePort'],
+    //  path: '/api/Utility/AuthenticateUser',
+    //  method: 'POST',
+    //  header: {
+    //    'Content-Type': 'application/x-www-form-urlencoded',
+    //    'Content-Length': postData.length,
+    //    'Connection': 'keep-alive'
+    //  }
+    //      };		
+    //http.request(options, function(resp){
+    //        resp.setEncoding('utf8');
+    //  var arr = '';
+    //  resp.on('data', function (chunk){
+    //    arr += chunk;
+    //  });
+    //        resp.on('end', function (){
+    //          var data = JSON.parse(arr);
+    //          // Handle error
+    //    var returnCode = 200;
+    //    if (data['Hash'] == 'ERROR')
+    //      returnCode = 500;
+    //          res.writeHead(returnCode, {
+    //    	      'Content-Type': 'application/json',
+    //    });
+    //    res.end(JSON.stringify(data));
+    //  });
+    //}).end(JSON.stringify(postData));
+    ////postReq.write(postData);
+    ////postReq.end();
   }
   else{
     res.render('login', {title: 'Login', data: '', userId: misc.getProperty(req.body, 'userId'), 
@@ -81,7 +119,7 @@ exports.login = function(req, res){
       active: 0, count: 0}
     );
   }
-}
+};
 
 /*
  * Log user out of system (basically delete their authentication token)
@@ -92,7 +130,7 @@ exports.logout = function(req, res){
     promotionId: '', enablePromotion: false, enableHistory: false, enableLogout: true, 
     active: 3, count: 0}
   );
-}
+};
 
 /*
  * Ensure user is authorized to access the system by comparing their HMAC-SHA-256 
@@ -122,51 +160,96 @@ exports.validate = function(req, res, next){
   }
   // Then, compare returned hash against one generated from the shared secret
   else{
-    var options = {
-      host: res.app.settings['serviceHost'],
-      port: res.app.settings['servicePort'],
-      path: '/api/Utility/GetSharedSecret?userId=' + req.params.userId,
-      method: 'GET'
-    };
-    http.request(options, function(resp){
-      resp.setEncoding('utf8');
-      var arr = '';
-      resp.on('data', function(chunk){
-        arr += chunk;
-      });
-      resp.on('end', function(){
-        var returnedHash = req.query['hash'];
-        // Remove their hash from url & sort query parameters
-        var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); 
-        var url = req.path;
-        var div = '?'
-        for (q in queries){
-          url = url + div + q + '=' + queries[q];
-          div = '&';
+    var userId = req.params.userId;
+    fs.readFile('test.json', function(err, data){
+      if (err){
+        console.log('Error: %s', err);
+        throw err;
+      }
+
+      var db = JSON.parse(data);
+      var users = db.Users;
+
+      var returnedHash = req.query['hash'];
+
+      // Find user's signature to return
+      var sig = '';
+      for (u in users){
+        if (users[u].UserId === userId){
+          sig = users[u].Hash;
+          break;
         }
-        console.log(url + ' ' + arr);
-        var computedHash = new Hashes.SHA256().hex_hmac(url, JSON.parse(arr));
-        console.log(returnedHash + ' ' + computedHash);
-        if (returnedHash == computedHash)
-          next();
-        else{
-          console.log('Incorrect info! Retrieving new login information!');
-          res.status(500).render('login', {title: 'Login', data: '', 
-            userId: misc.getProperty(req.params, 'userId'), 
-            promotionId: misc.getProperty(req.params, 'promotionId'), 
-	    enablePromotion: false, enableHistory: false, 
-	    enableLogout: false, active: 0, count: 0}
-          );
-        }
-      });
-      resp.on('error', function(){
-        res.status(500).render('error', {title: 'Error', 
-          data: 'Invalid login credentials!'}
+      }
+
+      //Remove their hash from url & sort query parameters
+      var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); 
+      var url = req.path;
+      var div = '?';
+      for (q in queries){
+        url = url + div + q + '=' + queries[q];
+        div = '&';
+      }
+      console.log(url + ' ' + sig);
+      var computedHash = new Hashes.SHA256().hex_hmac(url, JSON.parse(sig));
+      console.log(returnedHash + ' ' + computedHash);
+      if (returnedHash === computedHash){
+        next();
+      }
+      else{
+        console.log('Incorrect info! Retrieving new login information!');
+        res.status(500).render('login', {title: 'Login', data: '', 
+          userId: misc.getProperty(req.params, 'userId'), 
+          promotionId: misc.getProperty(req.params, 'promotionId'), 
+          enablePromotion: false, enableHistory: false, 
+          enableLogout: false, active: 0, count: 0}
         );
-      });
-    }).end();
+      }
+    });
+    //var options = {
+    //  host: res.app.settings['serviceHost'],
+    //  port: res.app.settings['servicePort'],
+    //  path: '/api/Utility/GetSharedSecret?userId=' + req.params.userId,
+    //  method: 'GET'
+    //};
+    //http.request(options, function(resp){
+    //  resp.setEncoding('utf8');
+    //  var arr = '';
+    //  resp.on('data', function(chunk){
+    //    arr += chunk;
+    //  });
+    //  resp.on('end', function(){
+    //    var returnedHash = req.query['hash'];
+    //    // Remove their hash from url & sort query parameters
+    //    var queries = misc.sortProperties(misc.deleteProperty(req.query, 'hash')); 
+    //    var url = req.path;
+    //    var div = '?'
+    //    for (q in queries){
+    //      url = url + div + q + '=' + queries[q];
+    //      div = '&';
+    //    }
+    //    console.log(url + ' ' + arr);
+    //    var computedHash = new Hashes.SHA256().hex_hmac(url, JSON.parse(arr));
+    //    console.log(returnedHash + ' ' + computedHash);
+    //    if (returnedHash == computedHash)
+    //      next();
+    //    else{
+    //      console.log('Incorrect info! Retrieving new login information!');
+    //      res.status(500).render('login', {title: 'Login', data: '', 
+    //        userId: misc.getProperty(req.params, 'userId'), 
+    //        promotionId: misc.getProperty(req.params, 'promotionId'), 
+    //        enablePromotion: false, enableHistory: false, 
+    //        enableLogout: false, active: 0, count: 0}
+    //      );
+    //    }
+    //  });
+    //  resp.on('error', function(){
+    //    res.status(500).render('error', {title: 'Error', 
+    //      data: 'Invalid login credentials!'}
+    //    );
+    //  });
+    //}).end();
   }
-}
+};
 
 /*
  * Test path to check if a user can access the system
@@ -175,4 +258,4 @@ exports.valid = function(req, res){
   console.log('User is authenticated.');
   var data = JSON.stringify({Status: 'Success'});
   res.status(200).end();
-}
+};
