@@ -1,6 +1,6 @@
 {
   "name": "promotion-approver",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -14,6 +14,6 @@
   },
   "subdomain": "approver",
   "engines": {
-    "node": "0.9.x"
+    "node": "0.8.x"
   }
 }
