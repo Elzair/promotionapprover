@@ -153,7 +153,6 @@ exports.promotion = function(req, res){
       }
       if (promos[i].PromotionId === promotionId){
         p = i;
-        break;
       }
     }
     // Return an error if the promotion is not found
