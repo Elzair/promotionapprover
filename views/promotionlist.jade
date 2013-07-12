@@ -39,7 +39,7 @@ block content
     tbody
       - var alt = 0
         each promo in approved
-          - var filepath = '/' + userId + '/promotion/' + promo['Id'];
+          - var filepath = '/' + userId + '/promotion/' + promo['PromotionId'];
           #filepath
             - alt = 1 - alt
               tr(class=alt ? 'odd' : 'even')
@@ -67,7 +67,7 @@ block content
     tbody
       - var alt = 0
         each promo in rejected
-          - var filepath = '/' + userId + '/promotion/' + promo['Id'];
+          - var filepath = '/' + userId + '/promotion/' + promo['PromotionId'];
           #filepath
             - alt = 1 - alt
               tr(class=alt ? 'odd' : 'even')
