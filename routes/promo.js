@@ -37,9 +37,11 @@ exports.history = function(req, res){
       // Only show promotion if user is in approval chain
       showPromo = false;
       promo = promos[i];
+      a = -1;
       for (j=0; j<promo.Approvers.length; j++){
         if (promo.Approvers[j].UserId === userId){
           showPromo = true;
+          a = j;
           //break;
         }
       }
@@ -56,12 +58,16 @@ exports.history = function(req, res){
           case 1:
             pending.push(stub);
             console.log('%j', stub);
-            count += 1;
+            if (promo.Approvers[a].ApprovalStatus === 2){
+              count +=1;
+            }
             break;
           case 2:
             pending.push(stub);
             console.log('%j', stub);
-            count +=1;
+            if (promo.Approvers[a].ApprovalStatus === 2){
+              count +=1;
+            }
             break;
           case 3:
             approved.push(stub);
@@ -144,12 +150,17 @@ exports.promotion = function(req, res){
     var db = JSON.parse(data);
     var promos = db.Promotions;
 
-    // Get the position of the correct promotion and
-    // the number of pending promotions
+    // Retrieve the indicated promotion and the number of 
+    // promotions the user has not approved or rejected
     var p = -1;
     for (i=0; i<promos.length; i++){
       if (promos[i].ApprovalStatus === 1 || promos[i].ApprovalStatus === 2){
-        count += 1;
+        for (j=0; j<promos[i].Approvers.length; j++){
+          if (promos[i].Approvers[j].UserId === userId && 
+              promos[i].Approvers[j].ApprovalStatus === 2){
+            count += 1;
+          }
+        }
       }
       if (promos[i].PromotionId === promotionId){
         p = i;
