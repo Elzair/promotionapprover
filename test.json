@@ -4,6 +4,14 @@
       "UserId": "rhitgptw",
       "Password": "123456",
       "Hash": "53490743095374037533885823825"
+    },
+    {
+      "UserId": "rhitgjoe",
+      "Password": "password",
+    },
+    {
+      "Admin": "admin",
+      "Password": "admin"
     }
   ],
   "Promotions": [
