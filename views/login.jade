@@ -6,7 +6,7 @@ block content
   p(id='userIdVal', class='userIdVal', hidden) #{userId}
   p(id='promotionIdVal', class='promotionIdVal', hidden) #{promotionId}
   p(class='error') This website requires Javascript & Web Storage to work. Please enable them or use a browser that supports them.
-  script.(type='text/javascript')
+  script(type='text/javascript').
     $(function(){
     $('.error').html('This website requires Web Storage to work. Please enable it or use a browser that supports it.');
     if (typeof(Storage) !== 'undefined')

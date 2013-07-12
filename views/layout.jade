@@ -17,7 +17,7 @@ html
     script(type='text/javascript', src='/javascripts/utils.js')
   body	
     div(data-role='page')
-      script.(type='text/javascript')
+      script(type='text/javascript').
         $(function(){
           $('a.validate').click(function(){
             this.href = completeUrl(this.href, localStorage.getItem('CMPHASH'));
