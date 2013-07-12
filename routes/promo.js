@@ -326,7 +326,7 @@ exports.decision = function(req, res){
     if (canApprove && decision === 'Approve'){
       db.Promotions[p].Approvers[a].ApprovalStatus = 3;
       // Set promotion to approved if user is last in approval chain
-      if (j+1 === promo.Approvers.length){
+      if (a+1 === promo.Approvers.length){
         db.Promotions[p].ApprovalStatus = 3;
       }
       else{
