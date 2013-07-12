@@ -3,15 +3,18 @@
     {
       "UserId": "rhitgptw",
       "Password": "123456",
+      "Role": "USER",
       "Hash": "53490743095374037533885823825"
     },
     {
       "UserId": "rhitgjoe",
       "Password": "password",
+      "Role": "USER"
     },
     {
       "Admin": "admin",
-      "Password": "admin"
+      "Password": "admin",
+      "Role": "ADMIN"
     }
   ],
   "Promotions": [
@@ -44,6 +47,11 @@
           "UserId": "rhitgptw",
           "Role": "user",
           "ApprovalStatus": 2
+        },
+        { 
+          "UserId": "rhitgjoe",
+          "Role": "user",
+          "ApprovalStatus": 1
         }
       ],
       "Usecs": [
