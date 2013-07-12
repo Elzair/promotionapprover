@@ -92,6 +92,280 @@
       "Communities": [
         "All Companies; All Communities"
       ]
+    },
+    {
+      "PromotionId": "FIJFEIOWHREWOIGJIOGJOIGEWJGIOWJ",
+      "Title": "Free HBO",
+      "Description": "Free HBO for one year with a cable contract",
+      "CreatorName": "Philip Woods",
+      "EffectiveDate": "01/01/2013",
+      "ExpireDate": "02/15/2013",
+      "ApprovalStatus": 1,
+      "RejectionReason": "",
+      "CreatorEmail": "philip.woods@comporium.com",
+      "CreatorTelephone": "7068688095",
+      "CreatorMobile": "7049603236",
+      "MarketingObjective": "To sell cable",
+      "AdvertisingCriteria": "To Advertise",
+      "Budget": "$3000.00",
+      "StartDate": "12/15/2012",
+      "EndDate": "02/01/2012",
+      "CustomerStatus": "New Customer",
+      "CustomerType": "Residential",
+      "RequiresContract": "Yes",
+      "RequiresTraining": "No",
+      "Category": "Promotion",
+      "QuickView": "Free HBO for one year with a contract",
+      "Comments": "It's fairly obvious",
+      "Approvers": [
+        {
+          "UserId": "rhitgptw",
+          "Role": "user",
+          "ApprovalStatus": 2
+        },
+        {
+          "UserId": "rhitgjoe",
+          "Role": "user",
+          "ApprovalStatus": 1
+        }
+      ],
+      "Usecs": [
+        {
+          "Title": "HBO Channel",
+          "UsecCode": "HBOCHA",
+          "Rate": ""
+        },
+        {
+          "Title": "Free Premium",
+          "UsecCode": "1YFRPR",
+          "Rate": ""
+        }
+      ],
+      "ImagePath": "/media/Milky_Way.jpeg",
+      "DocumentUploads": [
+        {
+          "FileName": "Monthly_Services_Summary.pdf",
+          "FilePath": "/media/Monthly_Services_Summary.pdf"
+        },
+        {
+          "FileName": "Philip_Woods_Resume.docx",
+          "FilePath": "/media/Philip_Woods_Resume.docx"
+        }
+      ],
+      "AudioUploads": [
+        {
+          "FileName": "Maid_with_the_Flaxen_Hair.mp3",
+          "FilePath": "/media/Maid_with_the_Flaxen_Hair.mp3"
+        }
+      ],
+      "VideoUploads": [
+        {
+          "FileName": "Bridge.wmv",
+          "FilePath": "/media/Bridge.wmv"
+        },
+        {
+          "FileName": "Test.mpg",
+          "FilePath": "/media/Test.mpg"
+        },
+        {
+          "FileName": "Sample_Sorenson.mov",
+          "FilePath": "/media/Sample_Sorenson.mov"
+        }
+      ],
+      "TargetServices": [
+        "Cable"
+      ],
+      "CommunicationTypes": [
+        "Google Ads",
+        "Online Ad",
+        "Facebook"
+      ],
+      "Communities": [
+        "RKHL: Rock Hill",
+        "RKHL: York County"
+      ]
+    },
+    {
+      "PromotionId": "FJDSLKJFDSLKTIEJIEWJIDSJFLJ",
+      "Title": "Free Showtime",
+      "Description": "Free Showtime for one year with a contract",
+      "CreatorName": "Philip Woods",
+      "EffectiveDate": "01/01/2013",
+      "ExpireDate": "02/15/2013",
+      "ApprovalStatus": 1,
+      "RejectionReason": "",
+      "CreatorEmail": "philip.woods@comporium.com",
+      "CreatorTelephone": "7068688095",
+      "CreatorMobile": "7049603236",
+      "MarketingObjective": "To sell cable",
+      "AdvertisingCriteria": "To Advertise",
+      "Budget": "$5000.00",
+      "StartDate": "12/15/2012",
+      "EndDate": "02/01/2012",
+      "CustomerStatus": "New Customer",
+      "CustomerType": "Residential",
+      "RequiresContract": "Yes",
+      "RequiresTraining": "No",
+      "Category": "Promotion",
+      "QuickView": "Free Showtime for one year with a contract",
+      "Comments": "It's fairly obvious",
+      "Approvers": [
+        {
+          "UserId": "rhitgptw",
+          "Role": "user",
+          "ApprovalStatus": 2
+        },
+        {
+          "UserId": "rhitgjoe",
+          "Role": "user",
+          "ApprovalStatus": 1
+        }
+      ],
+      "Usecs": [
+        {
+          "Title": "Showtime Channel",
+          "UsecCode": "SHOCHA",
+          "Rate": ""
+        },
+        {
+          "Title": "Free Premium",
+          "UsecCode": "1YFRPR",
+          "Rate": ""
+        }
+      ],
+      "ImagePath": "/media/Milky_Way.jpeg",
+      "DocumentUploads": [
+        {
+          "FileName": "Monthly_Services_Summary.pdf",
+          "FilePath": "/media/Monthly_Services_Summary.pdf"
+        },
+        {
+          "FileName": "Philip_Woods_Resume.docx",
+          "FilePath": "/media/Philip_Woods_Resume.docx"
+        }
+      ],
+      "AudioUploads": [
+        {
+          "FileName": "Maid_with_the_Flaxen_Hair.mp3",
+          "FilePath": "/media/Maid_with_the_Flaxen_Hair.mp3"
+        }
+      ],
+      "VideoUploads": [
+        {
+          "FileName": "Bridge.wmv",
+          "FilePath": "/media/Bridge.wmv"
+        },
+        {
+          "FileName": "Test.mpg",
+          "FilePath": "/media/Test.mpg"
+        },
+        {
+          "FileName": "Sample_Sorenson.mov",
+          "FilePath": "/media/Sample_Sorenson.mov"
+        }
+      ],
+      "TargetServices": [
+        "Cable"
+      ],
+      "CommunicationTypes": [
+        "Print Ad",
+        "Billboard",
+        "Facebook"
+      ],
+      "Communities": [
+        "FTML: All Communities"
+      ]
+    },
+    {
+      "PromotionId": "JLTEJLGJVLKVJLJELIJEWLIGJVLJE",
+      "Title": "FREE EVERYTHING",
+      "Description": "Free Everything!",
+      "CreatorName": "Philip Woods",
+      "EffectiveDate": "01/01/2013",
+      "ExpireDate": "02/15/2013",
+      "ApprovalStatus": 1,
+      "RejectionReason": "",
+      "CreatorEmail": "philip.woods@comporium.com",
+      "CreatorTelephone": "7068688095",
+      "CreatorMobile": "7049603236",
+      "MarketingObjective": "To go out of business",
+      "AdvertisingCriteria": "None",
+      "Budget": "$1,000,000,000.00",
+      "StartDate": "07/12/2013",
+      "EndDate": "12/31/2099",
+      "CustomerStatus": "All",
+      "CustomerType": "Both",
+      "RequiresContract": "No",
+      "RequiresTraining": "No",
+      "Category": "Promotion",
+      "QuickView": "Free Everything!",
+      "Comments": "Thiss will likely be rejected",
+      "Approvers": [
+        {
+          "UserId": "rhitgptw",
+          "Role": "user",
+          "ApprovalStatus": 2
+        },
+        {
+          "UserId": "rhitgjoe",
+          "Role": "user",
+          "ApprovalStatus": 1
+        }
+      ],
+      "Usecs": [
+        {
+          "Title": "Free Everything",
+          "UsecCode": "NOCOST",
+          "Rate": ""
+        }
+      ],
+      "ImagePath": "/media/QR_Code.png",
+      "DocumentUploads": [
+        {
+          "FileName": "Monthly_Services_Summary.pdf",
+          "FilePath": "/media/Monthly_Services_Summary.pdf"
+        },
+        {
+          "FileName": "Philip_Woods_Resume.docx",
+          "FilePath": "/media/Philip_Woods_Resume.docx"
+        }
+      ],
+      "AudioUploads": [
+        {
+          "FileName": "Maid_with_the_Flaxen_Hair.mp3",
+          "FilePath": "/media/Maid_with_the_Flaxen_Hair.mp3"
+        }
+      ],
+      "VideoUploads": [
+        {
+          "FileName": "Bridge.wmv",
+          "FilePath": "/media/Bridge.wmv"
+        },
+        {
+          "FileName": "Test.mpg",
+          "FilePath": "/media/Test.mpg"
+        },
+        {
+          "FileName": "Sample_Sorenson.mov",
+          "FilePath": "/media/Sample_Sorenson.mov"
+        }
+      ],
+      "TargetServices": [
+        "ALL"
+      ],
+      "CommunicationTypes": [
+        "Direct Mail",
+        "Print Ad",
+        "Online Banner",
+        "Google Ads",
+        "Billboard",
+        "Facebook",
+        "Twitter",
+        "CN2 News Story"
+      ],
+      "Communities": [
+        "All Companies; All Communities"
+      ]
     }
   ]
 }
