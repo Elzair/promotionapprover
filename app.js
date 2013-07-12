@@ -67,6 +67,7 @@ app.set('serviceProtocol', 'http://');
 app.set('serviceUrl', app.get('serviceProtocol') + app.get('serviceHost') + 
   ':' + app.get('servicePort'));
 
+app.get('/', user.login);
 app.get('/login', user.login);
 app.get('/:userId/login', user.loginPrompt);
 app.post('/:userId/login', user.login);
