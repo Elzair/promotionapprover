@@ -19,6 +19,7 @@ exports.history = function(req, res){
   if (promotionId !== ''){
     enablePromotion = true;
   }
+
   // Get list of promotions from database
   fs.readFile('test.json', function(err, data){
     if (err){
@@ -30,49 +31,50 @@ exports.history = function(req, res){
     var promos = db.Promotions;
     console.log('%j', promos);
 
+    // Sort promotions by their ApprovalStatus
     var pending = [], approved = [], rejected = [];
-    for (p in promos){
-      //if (promos.hasOwnProperty(p)){
-        showPromo = false;
-        promo = promos[p];
-        for (appr in promo.Approvers){
-          if (promo.Approvers[appr].UserId === userId){
-            showPromo = true;
-            //break;
-          }
+    for (i=0; i<promos.length; i++){
+      // Only show promotion if user is in approval chain
+      showPromo = false;
+      promo = promos[i];
+      for (j=0; j<promo.Approvers.length; j++){
+        if (promo.Approvers[j].UserId === userId){
+          showPromo = true;
+          //break;
         }
-        if (showPromo){
-          stub = {};
-          stub.PromotionId = promo.PromotionId;
-          stub.Title = promo.Title;
-          stub.Description = promo.Description;
-          stub.CreatorName = promo.CreatorName;
-          stub.EffectiveDate = promo.EffectiveDate;
-          stub.ExpireDate = promo.ExpireDate;
-          switch(promo.ApprovalStatus){
-            case 1:
-              pending.push(stub);
-              console.log('%j', stub);
-              count += 1;
-              break;
-            case 2:
-              pending.push(stub);
-              console.log('%j', stub);
-              count +=1;
-              break;
-            case 3:
-              approved.push(stub);
-              console.log('%j', stub);
-              break;
-            case 4:
-              rejected.push(stub);
-              console.log('%j', stub);
-              break;
-            default:
-              break;
-          }
+      }
+      if (showPromo){
+        // Only show some information in the list
+        stub = {};
+        stub.PromotionId = promo.PromotionId;
+        stub.Title = promo.Title;
+        stub.Description = promo.Description;
+        stub.CreatorName = promo.CreatorName;
+        stub.EffectiveDate = promo.EffectiveDate;
+        stub.ExpireDate = promo.ExpireDate;
+        switch(promo.ApprovalStatus){
+          case 1:
+            pending.push(stub);
+            console.log('%j', stub);
+            count += 1;
+            break;
+          case 2:
+            pending.push(stub);
+            console.log('%j', stub);
+            count +=1;
+            break;
+          case 3:
+            approved.push(stub);
+            console.log('%j', stub);
+            break;
+          case 4:
+            rejected.push(stub);
+            console.log('%j', stub);
+            break;
+          default:
+            break;
         }
-      //}
+      }
     }
     var out = { pending: pending, approved: approved, rejected: rejected};
     res.render('promotionlist', {title: 'History', data: out, userId: userId,
@@ -128,7 +130,7 @@ exports.history = function(req, res){
  * Display detailed promotion information
  */
 exports.promotion = function(req, res){
-  console.log('Retrieving info on promotion ' + req.params.promotionId);
+  console.log('Retrieving info on promotion %s', req.params.promotionId);
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
   var count = 0;
@@ -142,40 +144,42 @@ exports.promotion = function(req, res){
     var db = JSON.parse(data);
     var promos = db.Promotions;
 
-    // Get the position of the correct promotion & the number of pending promos
-    var i = -1;
-    for (p in promos){
-      if (promos[p].ApprovalStatus === 1 || promos[p].ApprovalStatus === 2){
+    // Get the position of the correct promotion and
+    // the number of pending promotions
+    var p = -1;
+    for (i=0; i<promos.length; i++){
+      if (promos[i].ApprovalStatus === 1 || promos[i].ApprovalStatus === 2){
         count += 1;
       }
-      if (promos[p].PromotionId === promotionId){
-        i = p;
+      if (promos[i].PromotionId === promotionId){
+        p = i;
         break;
       }
     }
     // Return an error if the promotion is not found
-    if (i === -1){
+    if (p === -1){
       res.status(404).render('error', {title: 'Promotion Error', 
         data: 'Cannot find this promotion!'}
       );
       return;
     }
-    var promo = promos[i];
+    var promo = promos[p];
 
     var canView = false, enableApprover = false;
     // Only show promotion if the user is an admin or they are in
     // the approval chain
-    for (appr in promo.Approvers){
-      approver = promo.Approvers[appr];
+    for (i=0; i<promo.Approvers.length; i++){
+      approver = promo.Approvers[i];
       if (approver.UserId === userId || approver.role === 'ADMIN'){
         canView = true;
         // Enable Approve/Rejecting if the promotion has not already been
         // approved and the user is next in the approval chain
-        if (promo.ApprovalStatus !== 3 && appr.ApprovalStatus === 2){
+        if (promo.ApprovalStatus !== 3 && approver.ApprovalStatus === 2){
           enableApprover = true;
         }
       }
     }
+
     // Make Approval Status easier to understand
     switch(promo.ApprovalStatus){
       case 1:
@@ -193,6 +197,8 @@ exports.promotion = function(req, res){
       default:
         break;
     }
+
+    // Render view
     if (canView){
       res.render('promotiondetail', {title: 'Detail', data: promo, userId: userId,
         promotionId: promotionId, enablePromotion: true, enableHistory: true, 
@@ -282,55 +288,60 @@ exports.decision = function(req, res){
     var promos = db.Promotions;
 
     // Get the position of the correct promotion
-    var i = -1;
-    for (p in promos){
-      if (promos.hasOwnProperty(p) && promos[p].PromotionId === promotionId){
-        i = p;
-        break;
+    var p = -1;
+    for (i=0; i<promos.length; i++){
+      if (promos[i].PromotionId === promotionId){
+        p = i;
       }
     }
     // Return an error if the promotion is not found
-    if (i === -1){
+    if (p === -1){
       res.status(404).render('error', {title: 'Promotion Error', 
         data: 'Cannot find this promotion!'}
-      ).end();
+      );
       return;
     }
-    var promo = promos[i];
+    var promo = promos[p];
 
-    // Get the position user in the promotion's approval chain
+    // Get the position of user in the promotion's approval chain
     // and determine if user can approve/reject the promotion
-    var j = -1;
+    var a = -1;
     var canApprove = false;
-    for (appr in promo.Approvers){
-      if (promo.Approvers[appr].UserId === userId){
-        j = appr;
+    for (i=0; i<promo.Approvers.length; i++){
+      if (promo.Approvers[i].UserId === userId){
+        a = i;
         if (promo.ApprovalStatus !== 3 && 
-            promo.Approvers[appr].ApprovalStatus === 2){
+            promo.Approvers[i].ApprovalStatus === 2){
           canApprove = true;
         }
       }
     }
 
-    // Approve promoion
+    // Approve/Reject promotion if user has the authorization
+    if (!canApprove){
+      res.status(500).render('error', {title: 'Promotion Error',
+        data: 'User does not have authorization to approve or reject this promotion!'}
+      );
+      return;
+    }
     if (canApprove && decision === 'Approve'){
-      db.Promotions[i].Approvers[j].ApprovalStatus = 3;
+      db.Promotions[p].Approvers[a].ApprovalStatus = 3;
       // Set promotion to approved if user is last in approval chain
       if (j+1 === promo.Approvers.length){
-        db.Promotions[i].ApprovalStatus = 3;
+        db.Promotions[p].ApprovalStatus = 3;
       }
       else{
-        db.Promotions[i].ApprovalStatus = 2;
+        db.Promotions[p].ApprovalStatus = 2;
         // Give approve/reject ability to next person in line
-        db.Promotions[i].Approvers[j+1].ApprovalStatus = 2;
+        db.Promotions[p].Approvers[a+1].ApprovalStatus = 2;
       }
     }
     // Reject promotion
     else if (canApprove && decision === 'Reject'){
-      db.Promotions[i].Approvers[j].ApprovalStatus = 4;
-      db.Promotions[i].ApprovalStatus = 4;
+      db.Promotions[p].Approvers[a].ApprovalStatus = 4;
+      db.Promotions[p].ApprovalStatus = 4;
       if (j+1 === promo.Approvers.length){
-        db.Promotions[i].Approvers[j+1].ApprovalStatus = 2;
+        db.Promotions[p].Approvers[a+1].ApprovalStatus = 2;
       }
     }
 
