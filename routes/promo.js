@@ -11,7 +11,7 @@ var http = require('http')
  * Display Current & Past Promotions
  */
 exports.history = function(req, res){
-  console.log('Retrieving history for user: ' + req.params.userId);
+  console.log('Retrieving history for user: %s', req.params.userId);
   var userId = req.params.userId;
   var promotionId = misc.getProperty(req.query, 'lastPromotionId');
   var enablePromotion = false;
@@ -346,7 +346,7 @@ exports.decision = function(req, res){
 
     // Store result in database
     var out = JSON.stringify(db, undefined, 2);
-    fs.writeFile('test.json', db, function(err){
+    fs.writeFile('test.json', out, function(err){
       if (err){
         console.log('Error: %s', err);
         res.status(403).render('error', {title: 'Promotion Error',
