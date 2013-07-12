@@ -15,6 +15,7 @@ exports.history = function(req, res){
   var userId = req.params.userId;
   var promotionId = misc.getProperty(req.query, 'lastPromotionId');
   var enablePromotion = false;
+  var count = 0;
   if (promotionId !== ''){
     enablePromotion = true;
   }
@@ -27,16 +28,17 @@ exports.history = function(req, res){
 
     var db = JSON.parse(data);
     var promos = db.Promotions;
+    console.log('%j', promos);
 
     var pending = [], approved = [], rejected = [];
-    for (var promo in promos){
-      if (promos.hasOwnProperty(promo)){
-        var showPromo = false;
-        var p = promos[promo];
-        for (var appr in p.Approvers){
-          if (p.Approvers[appr].UserId === userId){
+    for (p in promos){
+      //if (promos.hasOwnProperty(p)){
+        showPromo = false;
+        promo = promos[p];
+        for (appr in promo.Approvers){
+          if (promo.Approvers[appr].UserId === userId){
             showPromo = true;
-            break;
+            //break;
           }
         }
         if (showPromo){
@@ -50,21 +52,27 @@ exports.history = function(req, res){
           switch(promo.ApprovalStatus){
             case 1:
               pending.push(stub);
+              console.log('%j', stub);
+              count += 1;
               break;
             case 2:
               pending.push(stub);
+              console.log('%j', stub);
+              count +=1;
               break;
             case 3:
               approved.push(stub);
+              console.log('%j', stub);
               break;
             case 4:
               rejected.push(stub);
+              console.log('%j', stub);
               break;
             default:
               break;
           }
         }
-      }
+      //}
     }
     var out = { pending: pending, approved: approved, rejected: rejected};
     res.render('promotionlist', {title: 'History', data: out, userId: userId,
@@ -123,6 +131,7 @@ exports.promotion = function(req, res){
   console.log('Retrieving info on promotion ' + req.params.promotionId);
   var userId = req.params.userId;
   var promotionId = req.params.promotionId;
+  var count = 0;
   // Retrieve values from database
   fs.readFile('test.json', function(err, data){
     if (err){
@@ -133,10 +142,13 @@ exports.promotion = function(req, res){
     var db = JSON.parse(data);
     var promos = db.Promotions;
 
-    // Get the position of the correct promotion
+    // Get the position of the correct promotion & the number of pending promos
     var i = -1;
     for (p in promos){
-      if (promos.hasOwnProperty(p) && promos[p].PromotionId === promotionId){
+      if (promos[p].ApprovalStatus === 1 || promos[p].ApprovalStatus === 2){
+        count += 1;
+      }
+      if (promos[p].PromotionId === promotionId){
         i = p;
         break;
       }
@@ -145,7 +157,7 @@ exports.promotion = function(req, res){
     if (i === -1){
       res.status(404).render('error', {title: 'Promotion Error', 
         data: 'Cannot find this promotion!'}
-      ).end();
+      );
       return;
     }
     var promo = promos[i];

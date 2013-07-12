@@ -36,7 +36,7 @@ exports.login = function(req, res){
 
       var db = JSON.parse(data);
       var users = db.Users;
-      console.log('%j', db);
+      //console.log('%j', db);
 
       // Validate user
       var isValid = false;

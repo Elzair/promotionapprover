@@ -120,15 +120,15 @@ block content
   div#ImageId
     - var popuppath = '/media/' + data['ImageId'] + '?minify=1'
     - var bigpath = '/media/' + data['ImageId']
-    if data['ImageId']
-      a(href=bigpath)
-        img(src=popuppath)
+    - var imgpath = data['ImagePath']
+    a(href=imgpath)
+      img(src=imgpath)
   div#PrintId
     if data['DocumentUploads']
       p(class='bolded') Print
       ul
         each doc in data['DocumentUploads']
-          - var docurl = '/media/' + doc['FileId']
+          - var docurl = doc['FilePath']
           li
             a(href=docurl, data-ajax='false')
               p.filename #{doc['FileName']}
@@ -137,7 +137,7 @@ block content
       p(class='bolded') Audio
       ul
         each audio in data['AudioUploads']
-          - var audurl = '/media/' + audio['FileId']
+          - var audurl = audio['FilePath']
           li
             a(href=audurl, data-ajax='false') 
               p.filename #{audio['FileName']}
@@ -146,7 +146,7 @@ block content
       p(class='bolded') Video
       ul
         each video in data['VideoUploads']
-          - var vidurl = '/media/' + video['FileId']
+          - var vidurl = video['FilePath']
           li
             a(href=vidurl, data-ajax='false') 
               p.filename #{video['FileName']}
